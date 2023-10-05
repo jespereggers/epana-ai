@@ -1,0 +1,5 @@
+"We generally recommend taking the set of instructions
+and prompts that you found worked best for the model prior to fine-tuning,
+and including them in every training example.
+This should let you reach the best and most general results,
+especially if you have relatively few (e.g. under a hundred) training examples."
