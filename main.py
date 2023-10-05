@@ -1,8 +1,7 @@
 # constants to start and end conversations
 START_CONVO = '{"messages": ['
 END_CONVO = "]}"
-LEFTOUT_MSG_GER = ["Dokument weggelassen", "Sticker weggelassen", "Anhang weggelassen", "Bild weggelassen"]
-
+USER = "felix"
 
 def main():
     format_file("test.txt")
@@ -29,14 +28,8 @@ def format_file(file):
                     # strip to remove whitespace
                     content = splits[1].strip()
 
-                    # check if message-type is text (instead of documents, stickers etc.)
-                    is_text = True
-                    for msg in LEFTOUT_MSG_GER:  # currently only checking for german keywords
-                        if msg in current_message:
-                            is_text = False
-
-                    # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄
-                    if not last_actor == "" and is_text:
+                    # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄 ... seems alrighty!
+                    if not last_actor == "" and not '‎' in current_message:
                         # add the actor and the message with the needed format
                         formatted += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
@@ -48,8 +41,14 @@ def format_file(file):
                         current_timestamp = timestamp
 
                     current_message = content.split(":", 1)[1].strip()
-                    current_actor = content.split(":", 1)[0]
+                    
+                    if content.split(":", 1)[0] == USER:
+                        current_actor = "user"
+                    else:
+                        current_actor = "system"
+                        
                     last_actor = current_actor
+                    
                 except IndexError:
                     # .strip to remove \n
                     current_message = current_message.strip() + " " + line
