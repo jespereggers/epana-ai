@@ -3,8 +3,9 @@ START_CONVO = '{"messages": ['
 END_CONVO = "]}"
 LEFTOUT_MSG_GER = ["Dokument weggelassen", "Sticker weggelassen", "Anhang weggelassen", "Bild weggelassen"]
 
+
 def main():
-    format_file("jesper_chat.txt")
+    format_file("test.txt")
 
 
 def format_file(file):
@@ -30,7 +31,7 @@ def format_file(file):
 
                     # check if message-type is text (instead of documents, stickers etc.)
                     is_text = True
-                    for msg in LEFTOUT_MSG_GER: # currently only checking for german keywords
+                    for msg in LEFTOUT_MSG_GER:  # currently only checking for german keywords
                         if msg in current_message:
                             is_text = False
 
@@ -46,8 +47,6 @@ def format_file(file):
                             formatted = START_CONVO
                         current_timestamp = timestamp
 
-
-
                     current_message = content.split(":", 1)[1].strip()
                     current_actor = content.split(":", 1)[0]
                     last_actor = current_actor
@@ -57,9 +56,11 @@ def format_file(file):
 
         # remove the last ", "
         formatted = formatted[:-2] + END_CONVO
-        convos.append(formatted)
-        print(convos)
+        if not formatted == '{"messages":]}':
+            convos.append(formatted)
 
+        with open("output.json", "w", encoding='utf-8') as file:
+            file.write('\n'.join(convos))
 
 
 if __name__ == '__main__':
