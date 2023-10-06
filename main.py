@@ -16,9 +16,8 @@ def format_file(file):
         current_message = ""
         current_timestamp = ""
         for line in f:
-            # Check if the line contains only whitespace characters and if it's a media line
-            # (checking first to optimize performance
-            if not line.startswith('‎') and line.strip():
+            # Check if the line contains only whitespace characters
+            if line.strip():
                 try:
 
                     # don't delete!!! throws exception for lines without timestamp
@@ -33,7 +32,8 @@ def format_file(file):
 
                     # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄
                     # ... seems alrighty!
-                    if not last_actor == "":
+                    # checking for "LRM" to avoid the unusable lines
+                    if not last_actor == "" and not '‎' in current_message:
                         # add the actor and the message with the needed format
                         formatted += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
