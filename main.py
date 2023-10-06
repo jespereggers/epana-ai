@@ -3,6 +3,7 @@ START_CONVO = '{"messages": ['
 END_CONVO = "]}"
 USER = "felix"
 
+
 def main():
     format_file("test.txt")
 
@@ -15,7 +16,9 @@ def format_file(file):
         current_message = ""
         current_timestamp = ""
         for line in f:
-            if line.strip():  # Check if the line contains only whitespace characters
+            # Check if the line contains only whitespace characters and if it's a media line
+            # (checking first to optimize performance
+            if not line.startswith('‎') and line.strip():
                 try:
 
                     # don't delete!!! throws exception for lines without timestamp
@@ -28,8 +31,9 @@ def format_file(file):
                     # strip to remove whitespace
                     content = splits[1].strip()
 
-                    # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄 ... seems alrighty!
-                    if not last_actor == "" and not '‎' in current_message:
+                    # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄
+                    # ... seems alrighty!
+                    if not last_actor == "":
                         # add the actor and the message with the needed format
                         formatted += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
@@ -41,14 +45,14 @@ def format_file(file):
                         current_timestamp = timestamp
 
                     current_message = content.split(":", 1)[1].strip()
-                    
+
                     if content.split(":", 1)[0] == USER:
                         current_actor = "user"
                     else:
                         current_actor = "system"
-                        
+
                     last_actor = current_actor
-                    
+
                 except IndexError:
                     # .strip to remove \n
                     current_message = current_message.strip() + " " + line
