@@ -8,7 +8,7 @@ USER = "felix"
 
 
 def main():
-    format_file("test.txt")
+    format_file("jesper_chat.txt")
 
 
 def format_file(file):
@@ -38,6 +38,7 @@ def format_file(file):
                     # checking for "LRM" to avoid the unusable lines
                     if not last_actor == "" and not '‎' in current_message:
                         # add the actor and the message with the needed format
+                        current_message = current_message.replace('"', "")
                         formatted += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
                         # check for the end of a convo
@@ -65,7 +66,7 @@ def format_file(file):
         if not formatted == '{"messages":]}':
             convos.append(formatted)
 
-        with open("output.json", "w", encoding='utf-8') as file:
+        with open("output.jsonl", "w", encoding='utf-8') as file:
             file.write('\n'.join(convos))
 
 
