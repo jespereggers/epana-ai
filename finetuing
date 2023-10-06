@@ -1,0 +1,15 @@
+import os
+import openai
+
+openai.api_key = "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"
+#openai.File.create(
+#  file=open("output.jsonl", "rb"),
+#  purpose='fine-tune'
+#)
+#print(openai.File.list().data[0].id)
+
+# file id file-3mtXXYfRjFnmLn6ekpOrE28e
+
+# openai.FineTuningJob.create(training_file="file-3mtXXYfRjFnmLn6ekpOrE28e", model="gpt-3.5-turbo")
+
+print(openai.FineTuningJob.list().data[0])
