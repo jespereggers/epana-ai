@@ -1,5 +1,8 @@
 # constants to start and end conversations
-START_CONVO = '{"messages": ['
+START_CONVO_p1 = '{"messages": [{ "role": "system", "content": "'
+SYSTEM_PROMPT = "Du bist mein guter Freund Jesper mit dem ich kurze Textkonversationen über Gott und die Welt führe."
+START_CONVO_p2 = '" }, '
+START_CONVO = START_CONVO_p1 + SYSTEM_PROMPT + START_CONVO_p2
 END_CONVO = "]}"
 USER = "felix"
 
@@ -49,7 +52,7 @@ def format_file(file):
                     if content.split(":", 1)[0] == USER:
                         current_actor = "user"
                     else:
-                        current_actor = "system"
+                        current_actor = "assistant"
 
                     last_actor = current_actor
 
