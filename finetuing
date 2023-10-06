@@ -6,7 +6,7 @@ import openai
 from openai.cli import bcolors
 
 
-def main(api_key, filename):
+def start_finetuning_job(api_key, filename):
     openai.api_key = api_key
     upload_file = input("Press 'y' to upload file to openAi server.\n")
     # upload file
@@ -35,4 +35,4 @@ def main(api_key, filename):
 
 
 if __name__ == '__main__':
-    main("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", "output.jsonl")
+    start_finetuning_job("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", "output.jsonl")
