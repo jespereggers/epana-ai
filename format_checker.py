@@ -1,6 +1,3 @@
-# Used for formate checking and cost estimation; somehow not working with the current format,
-# if only on the huge dataset; works with the first 787 lines from jesper_chat.py but not any larger files
-
 import json
 import tiktoken  # for token counting
 import numpy as np
