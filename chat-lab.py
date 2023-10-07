@@ -8,7 +8,7 @@ def start_convo(api_key, model_id):
 
     while True:
         # Get input prompt of user
-        user_prompt: str = input("Enter message: ")
+        user_prompt: str = input("User: ")
         if user_prompt == "s":
             return
 
@@ -29,7 +29,7 @@ def start_convo(api_key, model_id):
         )
 
         # Provide user with response of chatbot
-        print(response.choices[0].message.content)
+        print("Assistant: " + response.choices[0].message.content)
 
 
 if __name__ == '__main__':
