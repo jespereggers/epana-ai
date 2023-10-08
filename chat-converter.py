@@ -1,28 +1,40 @@
+import random
+
+# name of the person in the whatsapp chat which will be replaced as 'user'
+USER = "felix"
+COUNTERPART = "Jesper"
+
 # system prompt which will be added to the start of every conversation
-SYSTEM_PROMPT = "Du bist mein guter Freund Jesper mit dem ich kurze Textkonversationen über Gott und die Welt führe."
+SYSTEM_PROMPTS = [
+    "You are " + COUNTERPART + ". Learn how to act by choice of words, characteristic traits and remembrance of content"
+]
 
 # constants to start and end conversations
 START_CONVO_p1 = '{"messages": [{ "role": "system", "content": "'
 START_CONVO_p2 = '" }, '
-START_CONVO = START_CONVO_p1 + SYSTEM_PROMPT + START_CONVO_p2
+START_CONVO = START_CONVO_p1 + SYSTEM_PROMPTS[0] + START_CONVO_p2
 END_CONVO = "]}"
 EMPTY_CONVO = START_CONVO[:-2] + END_CONVO
-
-# name of the person in the whatsapp chat which will be replaced as 'user'
-USER = "felix"
 
 # factor by which the main file is bigger than the verification file
 VERIFICATION_FACTOR = 10
 
+# data paths for quick adjustments
+TRAINING_PATH = "output.jsonl"
+VERIFICATION_PATH = "verification.jsonl"
 
-def main():
-    format_file("jesper_chat.txt")
+
+def get_dynamic_start_convo():
+    # not useful for now. idea is to give AI content-adjusted properties to pay attention to
+    # by distributing system prompts based on content of conversations.
+    system_prompt = SYSTEM_PROMPTS[random.randint(0, len(SYSTEM_PROMPTS) - 1)]
+    return START_CONVO_p1 + system_prompt + START_CONVO_p2
 
 
-def format_file(file):
+def chat_to_jsonl(file):
     convos = []
     verification_convos = []
-    current_convo = START_CONVO
+    current_convo = get_dynamic_start_convo()
     with open(file, encoding='utf-8') as f:
         last_actor = ""
         current_message = ""
@@ -60,7 +72,7 @@ def format_file(file):
                                     convos.append(current_convo)
                                 else:
                                     verification_convos.append(current_convo)
-                            current_convo = START_CONVO
+                            current_convo = get_dynamic_start_convo()
                         current_timestamp = timestamp
 
                     # split the content at ':' and strip the whitespace to get the content
@@ -86,11 +98,11 @@ def format_file(file):
             convos.append(current_convo)
 
         # write convos and verification_convos to output files
-        with open("output.jsonl", "w", encoding='utf-8') as file:
+        with open(TRAINING_PATH, "w", encoding='utf-8') as file:
             file.write('\n'.join(convos))
-        with open('verification.jsonl', 'w', encoding='utf-8') as file:
+        with open(VERIFICATION_PATH, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
 
 
 if __name__ == '__main__':
-    main()
+    chat_to_jsonl("jesper_chat.txt")

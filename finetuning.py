@@ -5,14 +5,19 @@
 import openai
 from openai.cli import bcolors
 
+API_KEY = "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"
 
-def start_finetuning_job(api_key, filename):
-    openai.api_key = api_key
+# data paths for quick adjustments
+TRAINING_PATH = "output.jsonl"
+
+
+def start_finetuning_job():
+    openai.api_key = "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"
     upload_file = input("Press 'y' to upload file to openAi server.\n")
     # upload file
     if upload_file == 'y':
         file = openai.File.create(
-            file=open(filename, "rb"),
+            file=open(TRAINING_PATH, "rb"),
             purpose='fine-tune'
         )
         file_id = file.id
@@ -35,4 +40,4 @@ def start_finetuning_job(api_key, filename):
 
 
 if __name__ == '__main__':
-    start_finetuning_job("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", "output.jsonl")
+    start_finetuning_job()
