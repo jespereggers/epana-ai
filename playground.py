@@ -27,7 +27,6 @@ def start_convo(api_key, model_id):
             "role": "user",
             "content": user_prompt
         })
-        print(CONVO)
         # Generate response based on prompt
         response = openai.ChatCompletion.create(
             model=model_id,
@@ -46,3 +45,4 @@ def start_convo(api_key, model_id):
 
 if __name__ == '__main__':
     start_convo("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", "ft:gpt-3.5-turbo-0613:personal::88BtAC5L")
+
