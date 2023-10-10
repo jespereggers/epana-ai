@@ -2,7 +2,7 @@ import os
 import openai
 
 CONVO = []
-SYSTEM_PROMPT = "Du bist mein guter Freund Jesper mit dem ich kurze Textkonversationen über Gott und die Welt führe."
+SYSTEM_PROMPT = "Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an Inhalt"
 
 
 def start_convo(api_key, model_id):
@@ -45,4 +45,4 @@ def start_convo(api_key, model_id):
 
 
 if __name__ == '__main__':
-    start_convo("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", "ft:gpt-3.5-turbo-0613:personal::86iNqClH")
+    start_convo("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", "ft:gpt-3.5-turbo-0613:personal::88BtAC5L")
