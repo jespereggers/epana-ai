@@ -1,6 +1,8 @@
 import os
 import openai
 
+CONVO = []
+SYSTEM_PROMPT = "Du bist mein guter Freund Jesper mit dem ich kurze Textkonversationen über Gott und die Welt führe."
 
 def start_convo(api_key, model_id):
     openai.api_key = api_key
@@ -12,7 +14,7 @@ def start_convo(api_key, model_id):
         messages=[
             {
                 "role": "user",
-                "content": "Du bist mein guter Freund Jesper mit dem ich kurze Textkonversationen über Gott und die Welt führe."
+                "content": SYSTEM_PROMPT
             }
         ],
         temperature=1,
@@ -23,6 +25,7 @@ def start_convo(api_key, model_id):
     )
 
     # Provide user with response of chatbot
+    CONVO.append(response.choices[0].message)
     print("Assistant: " + response.choices[0].message.content)
 
     while True:
@@ -30,16 +33,13 @@ def start_convo(api_key, model_id):
         user_prompt: str = input("User: ")
         if user_prompt == "s":
             return
+        if len(CONVO) > 20:
+            CONVO.pop(1)
 
         # Generate response based on prompt
         response = openai.ChatCompletion.create(
             model=model_id,
-            messages=[
-                {
-                    "role": "user",
-                    "content": user_prompt
-                }
-            ],
+            messages = CONVO,
             temperature=1,
             max_tokens=256,
             top_p=1,
@@ -48,6 +48,7 @@ def start_convo(api_key, model_id):
         )
 
         # Provide user with response of chatbot
+        CONVO.append(response.choices[0].message)
         print("Assistant: " + response.choices[0].message.content)
 
 
