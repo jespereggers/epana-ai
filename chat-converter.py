@@ -6,7 +6,7 @@ COUNTERPART = "Jesper"
 
 # system prompt which will be added to the start of every conversation
 SYSTEM_PROMPTS = [
-    "You are " + COUNTERPART + ". Learn how to act by choice of words, characteristic traits and remembrance of content"
+    "Du bist " + COUNTERPART + ". Eigne dir Wortwahl, Charaktereigenschaften und Erinnerung an besprochene Inhalte an."
 ]
 
 # constants to start and end conversations
