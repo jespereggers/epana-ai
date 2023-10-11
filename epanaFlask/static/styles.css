@@ -36,6 +36,37 @@
 
 }
 
+.messages {
+    position: absolute;
+    top: 15vh; /* Adjust the top position as needed */
+    right: 1vh; /* Adjust the right position as needed */
+    z-index: 9999; /* Ensure the messages appear on top of other content */
+    list-style: none;
+
+    padding: 10px;
+    margin: 0;
+
+
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    color: #386641;
+    border: 1px solid #ccc;
+    background-color: #fff;
+
+
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
 main {
     height: 86vh;
     padding: 10px 10px 10px 10px;
@@ -44,5 +75,46 @@ main {
 }
 
 main h1 {
-    color: #BC4749;
+    color: #386641;
+}
+
+main form {
+    width: 30%;
+    max-width: 600px;
+    min-width: 200px;
+}
+
+
+.btn-primary {
+    background-color: #BC4749;
+    border-color: #f5dec6;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: #a93f41;
+    border-color: #f5dec6;
+}
+
+#acc-data {
+    width: 30vw;
+    max-width: 500px;
+    min-width: 250px;
+
+    border-radius: 10px;
+
+    padding: 10px;
+    background-color: #6A994E;
+    color: #F2E8CF;
+
+}
+
+.acc-heading {
+    font-size: 3vh;
+    margin: 0;
+}
+
+.acc-content {
+    font-size: 2vh;
+    margin: 0;
 }

@@ -1,22 +1,22 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+Home
 {% endblock %}
 
 {% block nav %}
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
+<a href="/">Home</a>
+<a href="/login">Login</a>
+<a href="/register">Register</a>
 {% endblock %}
 
 {% block main %}
-    <h1>Let's begin</h1>
-    <p>
-        Welcome to Epana!
-    </p>
-    <p>
-        <a href="/login">Login</a>
-    </p>
+<h1>Let's begin</h1>
+<p>
+    Welcome to Epana, {{ email }}!
+</p>
+<p>
+
+</p>
 
 {% endblock %}

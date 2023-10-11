@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Account
+{% endblock %}
+
+{% block main %}
+<h1>Account</h1>
+<p id="acc-data">
+    <span class="acc-heading">Email</span>:
+    <br>
+    <span class="acc-content">{{ email }}</span>
+    <br>
+    <span class="acc-heading">Tier</span>:
+    <br>
+    <span class="acc-content">{{ tier }}</span>
+</p>
+{% endblock %}

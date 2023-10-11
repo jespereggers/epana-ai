@@ -1,15 +1,15 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Log In
+Register
 {% endblock %}
 
 {% block main %}
-<h1>Login</h1>
+<h1>Create Account</h1>
 <p>
 
 </p>
-<form action="/login" method="post">
+<form action="/register" method="post">
     <div class="mb-3">
         <input autocomplete="off" autofocus class="form-control" id="email" name="email"
                placeholder="E-Mail" type="text">
@@ -17,6 +17,10 @@ Log In
     <div class="mb-3">
         <input class="form-control" id="password" name="password" placeholder="Password" type="password">
     </div>
-    <button class="btn btn-primary" type="submit">Log In</button>
+    <div class="mb-3">
+        <input class="form-control" id="confirmation" name="confirmation" placeholder="Confirm Password"
+               type="password">
+    </div>
+    <button class="btn btn-primary" type="submit">Register</button>
 </form>
 {% endblock %}
