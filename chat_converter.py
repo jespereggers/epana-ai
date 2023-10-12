@@ -1,13 +1,12 @@
+import os
 import random
-
-# name of the person in the whatsapp chat which will be replaced as 'user'
-USER = "felix"
-COUNTERPART = "Jesper"
+import zipfile
 
 # system prompt which will be added to the start of every conversation
 SYSTEM_PROMPTS = [
-    "Du bist " + COUNTERPART + ". Eigne dir Wortwahl, Charaktereigenschaften und Erinnerung an besprochene Inhalte an."
+    "Eigne dir Wortwahl, Charaktereigenschaften und Erinnerung an besprochene Inhalte an."
 ]
+SYSTEM_PROMPT_START = "Du bist "
 
 # constants to start and end conversations
 START_CONVO_p1 = '{"messages": [{ "role": "system", "content": "'
@@ -23,19 +22,33 @@ VERIFICATION_FACTOR = 10
 TRAINING_PATH = "output.jsonl"
 VERIFICATION_PATH = "verification.jsonl"
 
+# name of the person in the whatsapp chat which will be replaced as 'user'
+ai_name: str
 
-def get_dynamic_start_convo():
-    # not useful for now. idea is to give AI content-adjusted properties to pay attention to
-    # by distributing system prompts based on content of conversations.
+def get_dynamic_start_convo(ai_name):
+    # confused why this only works when adding ai_name as function argument tbh
     system_prompt = SYSTEM_PROMPTS[random.randint(0, len(SYSTEM_PROMPTS) - 1)]
-    return START_CONVO_p1 + system_prompt + START_CONVO_p2
+    return START_CONVO_p1 + SYSTEM_PROMPT_START + ai_name + ". " + system_prompt + START_CONVO_p2
+
+
+def unzip_file(zip_file_path, extract_path):
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_path)
 
 
 def chat_to_jsonl(file, output_path, verification_path):
-    convos = []
-    verification_convos = []
-    current_convo = get_dynamic_start_convo()
+    # assert correct file format
+    if file.split(".")[-1] == "zip":
+        # unzip file
+        unzip_file(file, 'temp')
+        file = "temp/_chat.txt"
+
     with open(file, encoding='utf-8') as f:
+        convos = []
+        verification_convos = []
+        ai_name = f.readline().split('] ')[1].split(':')[0]
+        current_convo = get_dynamic_start_convo(ai_name)
+
         last_actor = ""
         current_message = ""
         current_timestamp = ""
@@ -72,17 +85,17 @@ def chat_to_jsonl(file, output_path, verification_path):
                                     convos.append(current_convo)
                                 else:
                                     verification_convos.append(current_convo)
-                            current_convo = get_dynamic_start_convo()
+                            current_convo = get_dynamic_start_convo(ai_name)
                         current_timestamp = timestamp
 
                     # split the content at ':' and strip the whitespace to get the content
                     current_message = content.split(":", 1)[1].strip()
 
                     # split the content at ':' to get the user
-                    if content.split(":", 1)[0] == USER:
-                        current_actor = "user"
-                    else:
+                    if content.split(":", 1)[0] == ai_name:
                         current_actor = "assistant"
+                    else:
+                        current_actor = "user"
 
                     last_actor = current_actor
                 # an IndexError occurs if there is no ']' found to split at. in this case, the message
@@ -103,6 +116,9 @@ def chat_to_jsonl(file, output_path, verification_path):
         with open(verification_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
 
+    # clean up epana directory
+    os.remove('temp/_chat.txt')
+    os.rmdir('temp')
 
 if __name__ == '__main__':
-    chat_to_jsonl("jesper_chat.txt", TRAINING_PATH, VERIFICATION_PATH)
+    chat_to_jsonl("chat.zip", TRAINING_PATH, VERIFICATION_PATH)
