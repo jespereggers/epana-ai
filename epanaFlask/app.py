@@ -9,9 +9,10 @@ from helpers import login_required, apology
 import sqlite3
 
 from chat_converter import chat_to_jsonl
-from finetuning import start_finetuning_job
+from finetuning_for_flask import start_finetuning_job
 
 DATABASE = 'epanaFlask/epana'
+API_KEY = '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'
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -55,6 +56,7 @@ def chat():
         # check if a model was selected
         if not model_name:
             return apology("Please select a model", 400)
+
         return render_template("chat.html", model_name=model_name)
     else:
         # get models from database and pass them to the template
@@ -98,8 +100,25 @@ def create_model():
         if not file_name:
             return apology("Please select a file name", 400)
 
-        # WORKING ON IT
-        return render_template("create_model.html")
+        # get the file id from the database
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute("SELECT id FROM input_files WHERE name = (?)", (file_name,))
+        file_id = cursor.fetchall()[0][0]
+        # recreate the file names;
+        # TODO: Currently not working when there is now file in the database, because the file_id is None
+        output_file_name = "output_" + str(file_id) + ".jsonl"
+        output_file_path = "output_files/" + output_file_name
+        verification_file_name = "verification_" + str(file_id) + ".jsonl"
+        verification_file_path = "output_files/" + verification_file_name
+        # start the fine-tuning job
+        return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
+                       "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",
+                       400)
+        data = start_finetuning_job(API_KEY, output_file_path,
+                                    verification_file_path)
+        return render_template("create_model.html", data=data)
 
 
     else:

@@ -8,6 +8,7 @@ Create Model
 {% endblock %}
 
 {% block main %}
+{% if request.method == 'GET' %}
 <h1>Create Model</h1>
 <span id="todo">TODO</span>
 <form action="/create_model" method="post">
@@ -21,5 +22,19 @@ Create Model
     </div>
     <button class="btn btn-red" type="submit">Create Model</button>
 </form>
+{% else %}
+<h1>Fine-tune job started</h1>
+job id: {{ data.id }}
+<br>
+model: {{ data.model }}
+<br>
+started: {{ data.created_at }}
+<br>
+<span id="{% if data.status == 'succeeded' %}success{% else %}failure{% endif %}">status: {{ data.status }}</span>
+<br>
+tokens: {{ data.trained_tokens }}
+{% endif %}
+
+
 {% endblock %}
 
