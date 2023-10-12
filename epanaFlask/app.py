@@ -17,24 +17,29 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
 
+# function to get database connection
 def get_db():
     if 'db' not in g:
         g.db = sqlite3.connect(DATABASE)
     return g.db
 
 
+# function to close database connection when app is closed
 @app.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'db'):
         g.db.close()
 
 
+# index route
 @app.route('/', methods=["GET", "POST"])
 @login_required
 def index():
+    # not sure if you can get here by POST but just in case
     if request.method == "POST":
         return
     else:
+        # get email from database and pass it to the template
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT email FROM users WHERE id = ?", (session["user_id"],))
@@ -45,9 +50,11 @@ def index():
 @app.route('/models', methods=["GET", "POST"])
 @login_required
 def models():
+    # not sure if you can get here by POST but just in case
     if request.method == "POST":
         return
     else:
+        # get models and files from database and pass them to the template
         db = get_db()
         cursor = db.cursor()
         # TODO: model database should probably hold the original filename to make it easier to identify the model
@@ -78,14 +85,13 @@ def upload_file():
 
         # FIXME: resubmitting the form will create a duplicate file; not sure how to fix; this might help:
         #  https://en.m.wikipedia.org/wiki/Post/Redirect/Get
-        # connect to database
+
         db = get_db()
         cursor = db.cursor()
 
         # check if file was uploaded
         if not request.files['file']:
             return apology("Please input a file", 400)
-
         file = request.files['file']
         # craft filename
         cursor.execute("SELECT MAX(id) FROM input_files")
@@ -93,20 +99,23 @@ def upload_file():
         if max_input_id is None:
             max_input_id = -1
         input_filename = "upload_" + str(max_input_id + 1) + ".txt"
-        original_filename = file.filename
-        # check if there is a row with the same filename in the database
-        cursor.execute("SELECT * FROM input_files WHERE name LIKE ?", (original_filename + "%",))
-        rows = cursor.fetchall()
-        if len(rows) > 0:
-            input_filename_db = original_filename + str(len(rows))
-            print(str(len(rows)))
-        else:
-            input_filename_db = original_filename
-
         # save file to server
         filepath = "file_uploads/" + input_filename
         file.save(filepath)
-        # add file to database
+
+        # save the original filename
+        original_filename = file.filename
+
+        # check if there are files with the same filename + potentially a number in the database
+        cursor.execute("SELECT * FROM input_files WHERE name LIKE ?", (original_filename + "%",))
+        same_names = cursor.fetchall()
+        # add a number to the filename if there are files with the same name
+        if len(same_names) > 0:
+            input_filename_db = original_filename + str(len(same_names))
+        else:
+            input_filename_db = original_filename
+
+        # add the input file to the database
         cursor.execute("INSERT INTO input_files (owner_id, name) VALUES (?, ?)",
                        (session["user_id"], input_filename_db))
 
@@ -126,9 +135,11 @@ def upload_file():
                        (session["user_id"], "output", input_filename_db + "output"))
         cursor.execute("INSERT INTO output_files (owner_id, type, name) VALUES (?, ?, ?)",
                        (session["user_id"], "verification", input_filename_db + "verification"))
-        flash("File: " + original_filename + " uploaded successfully", "success")
         db.commit()
+        # create a flash message to indicate a successful upload
+        flash("File: " + original_filename + " uploaded successfully", "success")
 
+        # redirect to models page
         return redirect("/models")
     else:
         return render_template("upload_file.html")
@@ -137,11 +148,13 @@ def upload_file():
 @app.route('/account', methods=["GET", "POST"])
 @login_required
 def account():
+    # not sure if you can get here by POST but just in case
     if request.method == "POST":
         return
     else:
         db = get_db()
         cursor = db.cursor()
+        # retrieve email and tier from database and pass them to the template
         cursor.execute("SELECT email, tier FROM users WHERE id = ?", (session["user_id"],))
         user_info = cursor.fetchall()[0]
         return render_template("account.html", email=user_info[0], tier=user_info[1])
@@ -179,7 +192,9 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0][0]
 
+        # create a flash message to indicate a successful login
         flash("Login successful!", "success")
+
         # Redirect user to home page
         return redirect("/")
 
@@ -190,14 +205,14 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
-
     if request.method == "POST":
         db = get_db()
         cursor = db.cursor()
+        # retrieve the email, password and the password confirmation from the form
         email = request.form.get("email")
         password = request.form.get("password")
         confirmation = request.form.get("confirmation")
+        # ensure that all fields are filled out
         if not email:
             return apology("Please input a email", 400)
         if not password:
@@ -207,34 +222,37 @@ def register():
         if not password == confirmation:
             return apology("Passwords do not match", 400)
 
+        # add the user to the database
         try:
             cursor.execute(
                 "INSERT INTO users (email, password_hash) VALUES (?, ?)",
                 (email, generate_password_hash(password)),
             )
             db.commit()
+        # if the email is already in use, return an error
         except sqlite3.IntegrityError:
             return apology("email already in use", 400)
 
+        # retrieve the automatically generated user id and store it in the session
         cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
         rows = cursor.fetchall()
         user_id = rows[0][0]
         session["user_id"] = user_id
 
+        # redirect to the home page, now logged in
         return redirect("/")
 
+    # show the register form on GET
     else:
         return render_template("register.html")
 
 
 @app.route("/logout")
 def logout():
-    """Log user out"""
-
     # Forget any user_id
     session.clear()
 
-    # Redirect user to login form
+    # Redirect user to login form now logged out
     return redirect("/")
 
 
