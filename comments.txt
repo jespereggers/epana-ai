@@ -1,5 +1,5 @@
-"We generally recommend taking the set of instructions
-and prompts that you found worked best for the model prior to fine-tuning,
-and including them in every training example.
-This should let you reach the best and most general results,
-especially if you have relatively few (e.g. under a hundred) training examples."
+# TODO: - own styles.css files for each page
+# TODO: - add a favicon
+# TODO: - change style of input fields to fit the color scheme (on active; remove blue border)
+# TODO: - improve error display (e.g. on login page)
+# TODO: - improve flash messages (e.g. after login)
