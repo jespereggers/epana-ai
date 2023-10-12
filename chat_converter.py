@@ -25,6 +25,7 @@ VERIFICATION_PATH = "verification.jsonl"
 # name of the person in the whatsapp chat which will be replaced as 'user'
 ai_name: str
 
+
 def get_dynamic_start_convo(ai_name):
     # confused why this only works when adding ai_name as function argument tbh
     system_prompt = SYSTEM_PROMPTS[random.randint(0, len(SYSTEM_PROMPTS) - 1)]
@@ -116,9 +117,11 @@ def chat_to_jsonl(file, output_path, verification_path):
         with open(verification_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
 
+    # FIXME not working with the current impl of the flask app
     # clean up epana directory
-    os.remove('temp/_chat.txt')
-    os.rmdir('temp')
+    # os.remove('temp/_chat.txt')
+    # os.rmdir('temp')
+
 
 if __name__ == '__main__':
     chat_to_jsonl("chat.zip", TRAINING_PATH, VERIFICATION_PATH)
