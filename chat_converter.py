@@ -31,7 +31,7 @@ def get_dynamic_start_convo():
     return START_CONVO_p1 + system_prompt + START_CONVO_p2
 
 
-def chat_to_jsonl(file):
+def chat_to_jsonl(file, output_path, verification_path):
     convos = []
     verification_convos = []
     current_convo = get_dynamic_start_convo()
@@ -98,11 +98,11 @@ def chat_to_jsonl(file):
             convos.append(current_convo)
 
         # write convos and verification_convos to output files
-        with open(TRAINING_PATH, "w", encoding='utf-8') as file:
+        with open(output_path, "w", encoding='utf-8') as file:
             file.write('\n'.join(convos))
-        with open(VERIFICATION_PATH, 'w', encoding='utf-8') as file:
+        with open(verification_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
 
 
 if __name__ == '__main__':
-    chat_to_jsonl("jesper_chat.txt")
+    chat_to_jsonl("jesper_chat.txt", TRAINING_PATH, VERIFICATION_PATH)
