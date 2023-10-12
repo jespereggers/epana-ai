@@ -3,3 +3,7 @@
 # TODO: - change style of input fields to fit the color scheme (on active; remove blue border)
 # TODO: - improve error display (e.g. on login page)
 # TODO: - improve flash messages (e.g. after login)
+
+
+# DB: - not sure if the output_files table need a date column
+# DB: - storing the id of the outputfile in the input_files db is a possibility
