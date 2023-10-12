@@ -1,0 +1,20 @@
+#chat {
+    width: 30vw;
+    max-width: 500px;
+    min-width: min-content;
+
+    border-radius: 10px;
+
+    padding: 1vh;
+    background-color: #6A994E;
+    color: #F2E8CF;
+}
+
+#chat-heading {
+    font-size: 3vh;
+    margin: 0;
+}
+
+#chat-content {
+    margin: 0;
+}

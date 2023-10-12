@@ -12,9 +12,11 @@ Create Model
 <span id="todo">TODO</span>
 <form action="/create_model" method="post">
     <div class="mb-3">
-        <select>
-            <option value="1">Test</option>
-
+        <select name="file_name">
+            <option value="0" disabled selected>Choose File</option>
+            {% for file in files %}
+            <option value="{{ file[0] }}">{{ file[0] }}</option>
+            {% endfor %}
         </select>
     </div>
     <button class="btn btn-red" type="submit">Create Model</button>

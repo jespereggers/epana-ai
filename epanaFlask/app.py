@@ -47,6 +47,25 @@ def index():
         return render_template("index.html", email=cursor.fetchall()[0][0])
 
 
+@app.route('/chat', methods=["GET", "POST"])
+@login_required
+def chat():
+    if request.method == "POST":
+        model_name = request.form.get("model_name")
+        # check if a model was selected
+        if not model_name:
+            return apology("Please select a model", 400)
+        return render_template("chat.html", model_name=model_name)
+    else:
+        # get models from database and pass them to the template
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
+        models = cursor.fetchall()
+        print(models)
+        return render_template("chat.html", models=models)
+
+
 @app.route('/models', methods=["GET", "POST"])
 @login_required
 def models():
@@ -58,8 +77,9 @@ def models():
         db = get_db()
         cursor = db.cursor()
         # TODO: model database should probably hold the original filename to make it easier to identify the model
-        cursor.execute("SELECT model_id FROM models WHERE owner_id = (?)", (session["user_id"],))
+        cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
         model_info = cursor.fetchall()
+        print(model_info)
         cursor.execute("SELECT name, date FROM input_files WHERE owner_id = (?)", (session["user_id"],))
         file_info = cursor.fetchall()
         # formate date to dd-mm-yyyy hh:mm
@@ -73,9 +93,22 @@ def models():
 @login_required
 def create_model():
     if request.method == "POST":
+        file_name = request.form.get("file_name")
+        # check if a model name was entered
+        if not file_name:
+            return apology("Please select a file name", 400)
+
+        # WORKING ON IT
         return render_template("create_model.html")
+
+
     else:
-        return render_template("create_model.html")
+        # get models from database and pass them to the template
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT name FROM input_files WHERE owner_id = (?)", (session["user_id"],))
+        files = cursor.fetchall()
+        return render_template("create_model.html", files=files)
 
 
 @app.route('/upload_file', methods=["GET", "POST"])
