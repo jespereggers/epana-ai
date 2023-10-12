@@ -6,4 +6,18 @@ Models
 
 {% block main %}
 <h1>Models</h1>
+{% if models %}
+<ul id="models">
+    {% for model in models %}
+    <li>
+        {{ model.id }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No models yet.</p>
+{% endif %}
+
+<button class="btn btn-red"><a href="/create_model">Create Model</a></button>
 {% endblock %}
+

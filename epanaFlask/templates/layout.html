@@ -13,16 +13,24 @@
     <script crossorigin="anonymous" src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"></script>
 
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
 
     <link href="/static/styles.css" rel="stylesheet">
+    <link href="/static/messages.css" rel="stylesheet">
+    {% block css %}{% endblock %}
 
     <title>Epana: {% block title %}{% endblock %}</title>
     <script src="/static/scripts.js" defer></script>
 
+
 </head>
 <body>
 <div id="nav-bar">
-    <h1>Epana</h1>
+    <a href="/"><h1>Epana</h1></a>
 
     <div id="nav-links">
         {% if session["user_id"] %}

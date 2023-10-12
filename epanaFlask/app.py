@@ -4,6 +4,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import login_required, apology
 import sqlite3
 
+from chat_converter import chat_to_jsonl
+from finetuning import start_finetuning_job
+
 DATABASE = 'epanaFlask/epana'
 
 app = Flask(__name__)
@@ -24,13 +27,14 @@ def close_db(error):
 
 @app.route('/', methods=["GET", "POST"])
 @login_required
-def index():  # put application's code here
+def index():
     if request.method == "POST":
         return
     else:
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT email FROM users WHERE id = ?", (session["user_id"],))
+
         return render_template("index.html", email=cursor.fetchall()[0][0])
 
 
@@ -44,8 +48,24 @@ def models():
         cursor = db.cursor()
         cursor.execute("SELECT model_id FROM models WHERE owner_id = ?", (session["user_id"],))
         model_info = cursor.fetchall()
-        print(model_info)
         return render_template("models.html", models=model_info)
+
+
+@app.route('/create_model', methods=["GET", "POST"])
+@login_required
+def create_model():
+    if request.method == "POST":
+        if not request.files['file']:
+            return apology("Please input a file", 400)
+        file = request.files['file']
+        filename = "placeholder.txt"
+        filepath = "file_uploads/" + filename
+        file.save(filepath)
+        chat_to_jsonl(filepath, "output_files/output.jsonl", "output_files/verification.jsonl")
+        
+        return render_template("create_model.html")
+    else:
+        return render_template("create_model.html")
 
 
 @app.route('/account', methods=["GET", "POST"])
