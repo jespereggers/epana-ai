@@ -4,20 +4,39 @@
 Models
 {% endblock %}
 
-{% block main %}
-<h1>Models</h1>
-{% if models %}
-<ul id="models">
-    {% for model in models %}
-    <li>
-        {{ model.id }}
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No models yet.</p>
-{% endif %}
-
-<button class="btn btn-red"><a href="/create_model">Create Model</a></button>
+{% block css %}
+<link href="/static/models.css" rel="stylesheet">
 {% endblock %}
 
+{% block main %}
+<div class="column">
+    <h1>Models</h1>
+    {% if models %}
+    <ul id="models">
+        {% for model in models %}
+        <li>
+            {{ model.id }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No models yet.</p>
+    {% endif %}
+    <button class="btn btn-red"><a href="/create_model">Create Model</a></button>
+</div>
+
+<div class="column">
+    <h1>Files</h1>
+    {% if files %}
+    <ul>
+        {% for file in files %}
+        <li>{{ file[0] }} - Upload Time: {{ file[1] }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No files yet.</p>
+    {% endif %}
+    <button class="btn btn-red"><a href="/upload_file">Upload File</a></button>
+</div>
+
+{% endblock %}

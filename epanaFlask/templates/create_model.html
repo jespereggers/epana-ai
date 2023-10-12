@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Models
+Create Model
 {% endblock %}
 {% block css %}
 <link href="/static/create_model.css" rel="stylesheet">
@@ -9,13 +9,15 @@ Models
 
 {% block main %}
 <h1>Create Model</h1>
-
-<form action="/create_model" enctype="multipart/form-data" method="post">
+<span id="todo">TODO</span>
+<form action="/create_model" method="post">
     <div class="mb-3">
-        <input autocomplete="off" autofocus class="form-control" id="file" name="file"
-               type="file">
+        <select>
+            <option value="1">Test</option>
+
+        </select>
     </div>
-    <button class="btn btn-red" type="submit">Beginn training</button>
+    <button class="btn btn-red" type="submit">Create Model</button>
 </form>
 {% endblock %}
 

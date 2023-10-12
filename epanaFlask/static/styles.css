@@ -3,6 +3,16 @@ body {
     font-family: 'Fira Code', monospace;
 }
 
+#todo {
+    font-size: 4em;
+    color: red;
+    transition: 10s ease;
+}
+
+#todo:hover {
+    font-size: 20em;
+}
+
 a {
     text-decoration: none;
     color: #ffffff;
@@ -67,6 +77,14 @@ main form {
     width: 30%;
     max-width: 600px;
     min-width: 200px;
+}
+
+.btn {
+    font-size: 1em;
+    min-width: fit-content;
+    max-width: 10vw;
+    min-height: fit-content;
+    max-height: 10vh;
 }
 
 
