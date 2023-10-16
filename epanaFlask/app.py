@@ -64,7 +64,6 @@ def chat():
         cursor = db.cursor()
         cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
         models = cursor.fetchall()
-        print(models)
         return render_template("chat.html", models=models)
 
 
@@ -81,7 +80,6 @@ def models():
         # TODO: model database should probably hold the original filename to make it easier to identify the model
         cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
         model_info = cursor.fetchall()
-        print(model_info)
         cursor.execute("SELECT name, date FROM input_files WHERE owner_id = (?)", (session["user_id"],))
         file_info = cursor.fetchall()
         # formate date to dd-mm-yyyy hh:mm
@@ -107,7 +105,7 @@ def create_model():
         cursor.execute("SELECT id FROM input_files WHERE name = (?)", (file_name,))
         file_id = cursor.fetchall()[0][0]
         # recreate the file names;
-        # TODO: Currently not working when there is now file in the database, because the file_id is None
+        # TODO: Currently not working when there is no file in the database, because the file_id is None
         output_file_name = "output_" + str(file_id) + ".jsonl"
         output_file_path = "output_files/" + output_file_name
         verification_file_name = "verification_" + str(file_id) + ".jsonl"

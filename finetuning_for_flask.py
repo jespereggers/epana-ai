@@ -10,16 +10,24 @@ from openai.cli import bcolors
 def start_finetuning_job(api_key, output_path, verification_path):
     openai.api_key = api_key
     # upload file
-    file = openai.File.create(
+    output_file = openai.File.create(
         file=open(output_path, "rb"),
         purpose='fine-tune'
     )
-    file_id = file.id
+    output_file_id = output_file.id
     print(f"{bcolors.OKGREEN}file uploaded{bcolors.ENDC}")
-    print("file_id: ", file_id)
+    print("file_id: ", output_file_id)
+
+    # upload verification file
+    verification_file = openai.File.create(
+        file=open(verification_path, "rb"),
+        purpose='fine-tune'
+    )
+    verification_file_id = verification_file.id
 
     # create job
-    openai.FineTuningJob.create(training_file=file_id, model="gpt-3.5-turbo")
+    openai.FineTuningJob.create(training_file=output_file_id, validation_file=verification_file_id,
+                                model="gpt-3.5-turbo")
     print("finetuneJob created")
 
     # print fintuningJobs
