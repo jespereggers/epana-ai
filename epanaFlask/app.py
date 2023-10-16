@@ -10,12 +10,17 @@ import sqlite3
 
 from chat_converter import chat_to_jsonl
 from finetuning_for_flask import start_finetuning_job
+from playground import askBot
 
 DATABASE = 'epanaFlask/epana'
 API_KEY = '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'
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
+SYSTEM_PROMPT = "Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an Inhalt"
+
+current_conversation = [{"role": "user", "content": SYSTEM_PROMPT}]
+current_model = None
 
 
 # function to get database connection
@@ -53,6 +58,8 @@ def index():
 def chat():
     if request.method == "POST":
         model_name = request.form.get("model_name")
+        current_model = model_name
+        print(current_model)
         # check if a model was selected
         if not model_name:
             return apology("Please select a model", 400)
@@ -157,7 +164,8 @@ def upload_file():
         original_filename = file.filename
 
         # check if there are files with the same filename + potentially a number in the database
-        cursor.execute("SELECT * FROM input_files WHERE name LIKE ?", (original_filename + "%",))
+        cursor.execute("SELECT * FROM input_files WHERE name LIKE ? AND owner_id = ?",
+                       (original_filename + "%", session["user_id"]))
         same_names = cursor.fetchall()
         # add a number to the filename if there are files with the same name
         if len(same_names) > 0:
@@ -304,6 +312,19 @@ def logout():
 
     # Redirect user to login form now logged out
     return redirect("/")
+
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    user_prompt = request.form.get("user_prompt")
+    print(current_model)
+    answer = askBot(API_KEY, current_model, current_conversation, user_prompt)
+    if len(current_conversation) > 19:
+        current_conversation.pop(1)
+    current_conversation.append({"role": "user", "content": user_prompt})
+    current_conversation.append(answer)
+    answer_content = answer.content
+    return answer_content
 
 
 if __name__ == '__main__':

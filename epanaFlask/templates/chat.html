@@ -6,6 +6,7 @@ Chat
 
 {% block css %}
 <link href="/static/chat.css" rel="stylesheet">
+<script src="/static/chat.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -27,6 +28,9 @@ Chat
     <span class="chat-heading">Chat with {{ model_name }}</span>
     <br>
     <span class="chat-content"></span>
+    <br>
+    <input type="text" id="chat-input" placeholder="Type your message here...">
+    <button class="btn btn-red" id="chat-send" onclick="getChat()">Send</button>
 </p>
 
 {% endif %}
