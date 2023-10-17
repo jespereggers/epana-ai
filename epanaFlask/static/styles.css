@@ -1,6 +1,16 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    min-height: 100%;
+}
+
 body {
     font-size: 2vh;
     font-family: 'Fira Code', monospace;
+    display: flex;
+    flex-direction: column;
+
+    background-color: #f2e8cf;
 }
 
 #todo {
@@ -32,6 +42,7 @@ a:hover {
     background-color: #386641;
     color: #f2e8cf;
     transition: 0.3s ease;
+    flex: none;
 }
 
 #nav-links {
@@ -64,7 +75,6 @@ a:hover {
 main {
     height: 86vh;
     padding: 2vh 2vh 2vh 2vh;
-    background-color: #f2e8cf;
     color: #386641;
 }
 
@@ -78,6 +88,15 @@ main form {
     max-width: 600px;
     min-width: 200px;
 }
+
+.form-control:focus {
+    box-shadow: 0 0 0.2rem 0.1rem #8a8a8a;
+}
+
+.form-select:focus {
+    box-shadow: 0 0 0.2rem 0.1rem #8a8a8a;
+}
+
 
 .btn {
     font-size: 1em;
