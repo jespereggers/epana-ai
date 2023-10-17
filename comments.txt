@@ -1,9 +1,7 @@
 # TODO: - own styles.css files for each page
 # TODO: - add a favicon
-# TODO: - change style of input fields to fit the color scheme (on active; remove blue border)
 # TODO: - improve error display (e.g. on login page)
 # TODO: - improve flash messages (e.g. after login)
-# TODO: - address the siituations where the chat is longer than the screen
 # TODO: - move the current_convo into the session object
 
 
