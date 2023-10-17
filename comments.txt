@@ -4,6 +4,7 @@
 # TODO: - improve error display (e.g. on login page)
 # TODO: - improve flash messages (e.g. after login)
 # TODO: - address the siituations where the chat is longer than the screen
+# TODO: - move the current_convo into the session object
 
 
 # DB: - not sure if the output_files table need a date column
