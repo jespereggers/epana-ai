@@ -24,15 +24,20 @@ Chat
     <button class="btn btn-red" type="submit">Choose Model</button>
 </form>
 {% else %}
-<p id="chat">
+<div id="chat">
     <span id="chat-heading">Chat with {{ model_name }}</span>
-    <br>
-    <span id="chat-content"></span>
-    <br>
+    <div id="chat-content">
+        <!-- Placeholder to test css
+        <div class="chatbox user">Hello</div>
+        <div class="chatbox assistant">wir müssen das ernst nehmen</div>
+        -->
+    </div>
 
-    <input type="text" id="chat-input" placeholder="Type your message here...">
-    <button class="btn btn-red" id="chat-send" onclick="getChat()">Send</button>
-</p>
+    <div id="chat-form">
+        <input class="form-control" type="text" id="chat-input" placeholder="Type your message here...">
+        <button class="btn btn-red" id="chat-button">Send</button>
+    </div>
+</div>
 
 {% endif %}
 {% endblock %}
