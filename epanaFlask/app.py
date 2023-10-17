@@ -1,8 +1,9 @@
 # naming convention for saved files: output_<file_id>.jsonl for the output file,
 # verification_<file_id>.jsonl for the verification file and upload_<file_id>.txt for the uploaded file
 import datetime
+import json
 
-from flask import Flask, flash, redirect, render_template, request, session, g
+from flask import Flask, flash, redirect, render_template, request, session, g, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from helpers import login_required, apology
@@ -20,7 +21,6 @@ app.secret_key = 'your_secret_key_here'
 SYSTEM_PROMPT = "Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an Inhalt"
 
 current_conversation = [{"role": "user", "content": SYSTEM_PROMPT}]
-current_model = None
 
 
 # function to get database connection
@@ -58,11 +58,16 @@ def index():
 def chat():
     if request.method == "POST":
         model_name = request.form.get("model_name")
-        current_model = model_name
-        print(current_model)
         # check if a model was selected
         if not model_name:
             return apology("Please select a model", 400)
+        # retrieve the model id from the database
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT model_id FROM models WHERE name = (?)", (model_name,))
+        model_id = cursor.fetchall()[0][0]
+        print(model_id)
+        session["selected_model_id"] = model_id
 
         return render_template("chat.html", model_name=model_name)
     else:
@@ -70,8 +75,8 @@ def chat():
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
-        models = cursor.fetchall()
-        return render_template("chat.html", models=models)
+        feteched_models = cursor.fetchall()
+        return render_template("chat.html", models=feteched_models)
 
 
 @app.route('/models', methods=["GET", "POST"])
@@ -316,15 +321,27 @@ def logout():
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
-    user_prompt = request.form.get("user_prompt")
-    print(current_model)
-    answer = askBot(API_KEY, current_model, current_conversation, user_prompt)
+    data_dict = request.json
+    user_prompt = data_dict.get("user_prompt")
+    # print("Line 326: user_prompt: ", user_prompt)
+
+    # append the user prompt to the conversation before asking the bot
+    current_conversation.append({"role": "user", "content": user_prompt})
     if len(current_conversation) > 19:
         current_conversation.pop(1)
-    current_conversation.append({"role": "user", "content": user_prompt})
-    current_conversation.append(answer)
+    # print("Line 332: current_conversation: ", current_conversation)
+    answer = askBot(API_KEY, session["selected_model_id"], current_conversation)
+    # append the answer to the conversation
+    current_conversation.append({"role": "assistant", "content": answer.content})
+    # print("Line 336: current_conversation: ", current_conversation)
+    # print("Line 337: answer: ", answer)
     answer_content = answer.content
-    return answer_content
+    # print("Line 339: answer_content: ", answer_content)
+    response_data = {
+        "response": answer_content
+    }
+    # print(response_data)
+    return json.dumps(response_data)
 
 
 if __name__ == '__main__':

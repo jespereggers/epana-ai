@@ -1,12 +1,22 @@
-function addNewChatbox(text) {
+const USER = true;
+const ASSISTANT = false;
+
+function addNewChatbox(text, player) {
     let chatbox = document.createElement("div");
     chatbox.className = "chatbox";
+    if (player) {
+        chatbox.className += " user";
+    } else {
+        chatbox.className += " assistant";
+    }
     chatbox.innerHTML = text;
-    document.body.appendChild(chatbox);
+    document.getElementById('chat').appendChild(chatbox);
 }
 
 function getChat() {
     let message = document.getElementById("chat-input").value;
+    addNewChatbox(message, USER)
+
 
     fetch('/api/chat', {
         method: 'POST',
@@ -17,7 +27,8 @@ function getChat() {
     })
         .then(response => response.json())
         .then(data => {
-            addNewChatbox(data.response);
+            console.log('Success:', data.response);
+            addNewChatbox(data.response, ASSISTANT);
         })
         .catch(error => {
             console.error('Error:', error);

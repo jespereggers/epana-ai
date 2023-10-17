@@ -1,5 +1,5 @@
 #chat {
-    width: 30vw;
+    width: 40vw;
     max-width: 500px;
     min-width: min-content;
 
@@ -16,9 +16,26 @@
 }
 
 #chat-content {
-    margin: 0;
+    margin: 5px;
+}
+
+#chat-input {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
 }
 
 .chatbox {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+}
 
+.user {
+    background-color: #26462d;
+    color: #000000;
+}
+
+.assistant {
+    background-color: #386641;
 }
