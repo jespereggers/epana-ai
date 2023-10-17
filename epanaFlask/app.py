@@ -315,7 +315,7 @@ def logout():
     # Forget any user_id
     session.clear()
 
-    # Redirect user to login form now logged out
+    # Redirect user to login form, now logged out
     return redirect("/")
 
 

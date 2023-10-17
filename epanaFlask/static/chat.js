@@ -32,6 +32,7 @@ function addNewChatbox(text, player) {
     }
     chatbox.innerHTML = text;
     document.getElementById('chat-content').appendChild(chatbox);
+    document.getElementById('chat-form').scrollIntoView();
 
 }
 

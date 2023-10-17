@@ -1,7 +1,9 @@
 #chat {
     width: 40vw;
-    max-width: 500px;
+    max-width: 1000px;
     min-width: min-content;
+
+    height: 75vh;
 
     border-radius: 10px;
 
@@ -9,15 +11,17 @@
     margin: 0;
     background-color: #6A994E;
     color: #F2E8CF;
+
+    overflow-y: auto;
 }
 
 #chat-heading {
-    font-size: 2.5vh;
-    margin: 5px;
+    font-size: 3.5vh;
+    margin: 0.7vh;
 }
 
 #chat-content {
-    margin: 5px;
+    margin: 2vh 0.7vh 0.7vh;
 }
 
 #chat-form {
@@ -26,19 +30,29 @@
     align-items: center;
     justify-content: space-between;
     margin: 5px;
+    font-size: 1.5vh;
 }
 
 #chat-button {
-    width: 18%;
-    margin-left: 10px;
+    margin-left: 1vw;
+    height: 4vh;
+    padding: 0.6vh 2vh 0.75vh 2vh;
+    font-size: 1.8vh;
+    
 }
 
 .chatbox {
-    min-height: 4vh;
     height: fit-content;
-    padding: 5px;
+    padding: 5px 5px 5px 0.5vw;
     border-radius: 5px;
     margin-bottom: 10px;
+    font-size: 2vh;
+}
+
+#chat-input {
+    padding-left: 0.5vw;
+    font-size: 1.8vh;
+    height: 4vh;
 }
 
 .user {
