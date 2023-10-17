@@ -2,7 +2,7 @@ import os
 import openai
 
 
-def askBot(api_key, model_id, current_conversation, user_prompt):
+def askBot(api_key, model_id, current_conversation):
     # Set OpenAI API key
     openai.api_key = api_key
 
@@ -17,7 +17,7 @@ def askBot(api_key, model_id, current_conversation, user_prompt):
         presence_penalty=0
     )
 
-    current_conversation.append(response.choices[0].message)
+    current_conversation
     return response.choices[0].message
 
 
