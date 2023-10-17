@@ -6,13 +6,14 @@
     border-radius: 10px;
 
     padding: 1vh;
+    margin: 0;
     background-color: #6A994E;
     color: #F2E8CF;
 }
 
 #chat-heading {
-    font-size: 3vh;
-    margin: 0;
+    font-size: 2.5vh;
+    margin: 5px;
 }
 
 #chat-content {
@@ -21,21 +22,27 @@
 
 #chat-input {
     padding: 5px;
-    margin: 5px;
     border-radius: 5px;
+
+    margin: 1%;
+    width: 70%;
+}
+
+#chat-send {
+    width: 18%;
+    margin: 1%;
 }
 
 .chatbox {
     padding: 5px;
-    margin: 5px;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .user {
-    background-color: #26462d;
-    color: #000000;
+    background-color: #386641;
 }
 
 .assistant {
-    background-color: #386641;
+    background-color: #6A994E;
 }

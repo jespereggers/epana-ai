@@ -10,7 +10,8 @@ function addNewChatbox(text, player) {
         chatbox.className += " assistant";
     }
     chatbox.innerHTML = text;
-    document.getElementById('chat').appendChild(chatbox);
+    document.getElementById('chat-content').appendChild(chatbox);
+
 }
 
 function getChat() {

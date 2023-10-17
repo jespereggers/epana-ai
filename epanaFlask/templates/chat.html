@@ -25,10 +25,11 @@ Chat
 </form>
 {% else %}
 <p id="chat">
-    <span class="chat-heading">Chat with {{ model_name }}</span>
+    <span id="chat-heading">Chat with {{ model_name }}</span>
     <br>
-    <span class="chat-content"></span>
+    <span id="chat-content"></span>
     <br>
+
     <input type="text" id="chat-input" placeholder="Type your message here...">
     <button class="btn btn-red" id="chat-send" onclick="getChat()">Send</button>
 </p>
