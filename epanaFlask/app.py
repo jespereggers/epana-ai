@@ -2,6 +2,7 @@
 # verification_<file_id>.jsonl for the verification file and upload_<file_id>.txt for the uploaded file
 import datetime
 import json
+import os
 
 from flask import Flask, flash, redirect, render_template, request, session, g, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -146,7 +147,6 @@ def create_model():
 @login_required
 def upload_file():
     if request.method == "POST":
-
         # FIXME: resubmitting the form will create a duplicate file; not sure how to fix; this might help:
         #  https://en.m.wikipedia.org/wiki/Post/Redirect/Get
 
@@ -181,8 +181,8 @@ def upload_file():
             input_filename_db = original_filename
 
         # add the input file to the database
-        cursor.execute("INSERT INTO input_files (owner_id, name) VALUES (?, ?)",
-                       (session["user_id"], input_filename_db))
+        #cursor.execute("INSERT INTO input_files (owner_id, name, size) VALUES (?, ?, ?)",
+          #             (session["user_id"], input_filename_db, 1))
 
         # FIXME: make this more robust (e.g. make the output file name dependent on the amount of output files not
         #  input files in the database)
@@ -191,8 +191,10 @@ def upload_file():
         output_path = "output_files/" + output_name
         verification_name = "verification_" + str(max_input_id + 1) + ".jsonl"
         verification_path = "output_files/" + verification_name
+
         # convert file to jsonl
         chat_to_jsonl(filepath, output_path, verification_path)
+
         # add files to database
         # TODO: add original filename to database instead of the generated one (DONE) or probably just delete the name
         #  column from the database cuz its not needed but idk, db structure might need some improvements

@@ -37,7 +37,7 @@ def unzip_file(zip_file_path, extract_path):
         zip_ref.extractall(extract_path)
 
 
-def chat_to_jsonl(file, output_path, verification_path):
+def chat_to_jsonl(file, output_path, verification_path) -> int:
     # assert correct file format
     if file.split(".")[-1] == "zip":
         # unzip file
@@ -116,6 +116,7 @@ def chat_to_jsonl(file, output_path, verification_path):
             file.write('\n'.join(convos))
         with open(verification_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
+    return len(current_convo)
 
     # FIXME not working with the current impl of the flask app
     # clean up epana directory
