@@ -1,5 +1,6 @@
 # naming convention for saved files: output_<file_id>.jsonl for the output file,
 # verification_<file_id>.jsonl for the verification file and upload_<file_id>.txt for the uploaded file
+
 import datetime
 import json
 import os
@@ -167,6 +168,7 @@ def upload_file():
         filepath = "file_uploads/" + input_filename
         file.save(filepath)
 
+
         # save the original filename
         original_filename = file.filename
 
@@ -180,9 +182,12 @@ def upload_file():
         else:
             input_filename_db = original_filename
 
+        # count chats (translates to bytes) in file
+        size = os.path.getsize(filepath)
+
         # add the input file to the database
-        #cursor.execute("INSERT INTO input_files (owner_id, name, size) VALUES (?, ?, ?)",
-          #             (session["user_id"], input_filename_db, 1))
+        cursor.execute("INSERT INTO input_files (owner_id, name, size) VALUES (?, ?, ?)",
+                       (session["user_id"], input_filename_db, os.path.getsize(filepath)))
 
         # FIXME: make this more robust (e.g. make the output file name dependent on the amount of output files not
         #  input files in the database)

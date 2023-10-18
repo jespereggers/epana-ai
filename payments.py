@@ -1,10 +1,14 @@
 import requests
 import json
 
-def initiate_paypal_payment(amount, currency, description):
-    client_id = 'YOUR_CLIENT_ID'
-    client_secret = 'YOUR_CLIENT_SECRET'
-    base_url = 'YOUR_BASE_URL'
+CLIENT_ID = "AY9rlr3YXt8s5V6rg8m2GAWmT81jbMsPjVcuQV9Q6QMrijtbgLT00uy12i9T91hfQ_2yBv-KZBqH8V0Z"
+CLIENT_SECRET = "EP3kAeANsKggWylQYgzwAn-HwLLgEafKKL6V3K8OOD7PGER0bnOQm_Qyv0vhu34-gK3NpE20tv6dvHAc"
+BASE_URL = "http://127.0.0.1:5000/"
+
+def initiate_paypal_payment(price, currency, description):
+    client_id = CLIENT_ID
+    client_secret = CLIENT_SECRET
+    base_url = BASE_URL
 
     # Get access token
     auth_url = f'{base_url}/v1/oauth2/token'
@@ -30,7 +34,7 @@ def initiate_paypal_payment(amount, currency, description):
         'purchase_units': [{
             'amount': {
                 'currency_code': currency,
-                'value': amount
+                'value': price
             },
             'description': description
         }]
@@ -46,10 +50,7 @@ def initiate_paypal_payment(amount, currency, description):
         return None
 
 # Example usage
-amount = '10.00'
-currency = 'USD'
-description = 'Test Payment'
-payment_id = initiate_paypal_payment(amount, currency, description)
+payment_id = initiate_paypal_payment("1", "USD", "Epana Mind Upload")
 if payment_id:
     print(f'Payment initiated successfully. Payment ID: {payment_id}')
 else:

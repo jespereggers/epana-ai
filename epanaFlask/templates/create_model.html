@@ -3,25 +3,28 @@
 {% block title %}
 Create Model
 {% endblock %}
+
 {% block css %}
 <link href="/static/create_model.css" rel="stylesheet">
+<script src="/static/model_creator.js"></script>
 {% endblock %}
 
 {% block main %}
 {% if request.method == 'GET' %}
 <h1>Create Model</h1>
-size: {{ files }}
 <form action="/create_model" method="post">
 
     <div class="mb-3">
-        <select name="file_name" class="form-select">
+        <select name="file_name" class="form-select" id="file-selector">
             <option value="0" disabled selected>Choose File</option>
             {% for file in files %}
             <option value="{{ file[0] }}">{{ file[0] }}</option>
             {% endfor %}
         </select>
     </div>
-    <button class="btn btn-red" type="submit">Create Model</button>
+    <button class="btn btn-red" type="submit" id="payButton">Pay $X</button>
+    <button class="btn btn-red">Resize Database</button>
+
 </form>
 
 {% else %}
@@ -37,6 +40,4 @@ started: {{ data.created_at }}
 tokens: {{ data.trained_tokens }}
 {% endif %}
 
-
 {% endblock %}
-
