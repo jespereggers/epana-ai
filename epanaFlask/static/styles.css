@@ -25,50 +25,12 @@ body {
 
 a {
     text-decoration: none;
-    color: #ffffff;
+    color: #f2e8cf;
     transition: 0.3s ease;
 }
 
 a:hover {
     color: #000000;
-}
-
-#nav-bar {
-    height: 14vh;
-    padding: 2vh 2vh 2vh 2vh;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #386641;
-    color: #f2e8cf;
-    transition: 0.3s ease;
-    flex: none;
-}
-
-#nav-links {
-    display: flex;
-    align-items: center;
-    transition: 1s ease;
-
-}
-
-
-#nav-bar h1 {
-    font-size: 7vh;
-    margin: 0; /* Remove the default margin */
-}
-
-#nav-bar a {
-    font-size: 3vh;
-    margin-right: 3vh; /* Add margin-right instead of padding */
-    color: #f2e8cf;
-    transition: color 0.3s ease;
-
-}
-
-#nav-bar a:hover {
-    color: #BC4749;
-
 }
 
 

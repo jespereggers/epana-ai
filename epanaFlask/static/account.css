@@ -19,3 +19,12 @@
 .acc-content {
     margin: 0;
 }
+
+.change-settings {
+    font-size: 1.5vh;
+    color: #ff93a9;
+}
+
+.change-settings:hover {
+    color: #ffffff;
+}

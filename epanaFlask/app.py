@@ -223,6 +223,66 @@ def account():
         return render_template("account.html", email=user_info[0], tier=user_info[1])
 
 
+@app.route('/change_password', methods=["GET", "POST"])
+@login_required
+def change_password():
+    if request.method == "POST":
+        db = get_db()
+        cursor = db.cursor()
+        old_password = request.form.get("old_password")
+        new_password = request.form.get("new_password")
+        confirmation_password = request.form.get("confirmation_password")
+        if not old_password:
+            return apology("Please input your old password", 400)
+        cursor.execute("SELECT password_hash FROM users WHERE id = ?", (session["user_id"],))
+        password_hash = cursor.fetchall()[0][0]
+        if not check_password_hash(password_hash, old_password):
+            return apology("Please input your correct old password", 400)
+        if not new_password:
+            return apology("Please input a new password", 400)
+        if not confirmation_password:
+            return apology("Please confirm your new password", 400)
+        if not new_password == confirmation_password:
+            return apology("Passwords do not match", 400)
+        cursor.execute("UPDATE users SET password_hash = ? WHERE id = ?", (generate_password_hash(new_password),
+                                                                           session["user_id"]))
+        db.commit()
+        flash("Password changed successfully", "success")
+
+        return redirect("/account")
+    else:
+        return render_template("change_password.html")
+
+
+@app.route('/change_tier', methods=["GET", "POST"])
+@login_required
+def change_tier():
+    if request.method == "POST":
+        db = get_db()
+        cursor = db.cursor()
+        new_tier = request.form.get("new_tier")
+        cursor.execute("SELECT tier FROM users WHERE id = ?", (session["user_id"],))
+        current_tier = cursor.fetchall()[0][0]
+        if not new_tier:
+            return apology("Please select a tier", 400)
+        if new_tier == current_tier:
+            return apology("You are already on this tier", 400)
+        cursor.execute("UPDATE users SET tier = ? WHERE id = ?", (new_tier, session["user_id"]))
+        db.commit()
+        flash("Tier changed successfully", "success")
+
+        return redirect("/account")
+    else:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT tier FROM users WHERE id = ?", (session["user_id"],))
+        user_tier = cursor.fetchall()[0][0]
+        cursor.execute("SELECT name FROM tiers")
+        tiers = cursor.fetchall()
+        print(tiers)
+        return render_template("change_tier.html", tiers=tiers, user_tier=user_tier)
+
+
 @app.route('/login', methods=["GET", "POST"])
 def login():
     db = get_db()

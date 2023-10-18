@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Change Tier
+{% endblock %}
+
+{% block css %}
+<link href="/static/change_tier.css" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+<h1>Change Plan</h1>
+<p>Current Tier: {{ user_tier }}</p>
+<form action="/change_tier" method="post">
+
+    <div class="mb-3">
+        <select name="new_tier" class="form-select">
+            <option value="0" disabled selected>Choose Tier</option>
+            {% for tier in tiers %}
+            {% if tier[0] == user_tier %}
+            <option value="{{ tier[0] }}" disabled>{{ tier[0] }}</option>
+            {% else %}
+
+            <option value="{{ tier[0] }}">{{ tier[0] }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </div>
+    <button class="btn btn-red" type="submit">Change Password</button>
+
+</form>
+{% endblock %}
