@@ -20,8 +20,6 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 SYSTEM_PROMPT = "Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an Inhalt"
 
-current_conversation = [{"role": "user", "content": SYSTEM_PROMPT}]
-
 
 # function to get database connection
 def get_db():
@@ -61,13 +59,17 @@ def chat():
         # check if a model was selected
         if not model_name:
             return apology("Please select a model", 400)
+
         # retrieve the model id from the database
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT model_id FROM models WHERE name = (?)", (model_name,))
         model_id = cursor.fetchall()[0][0]
-        print(model_id)
+
+        # store the model id in the session
         session["selected_model_id"] = model_id
+        # reset the conversation
+        session["current_conversation"] = [{"role": "user", "content": SYSTEM_PROMPT}]
 
         return render_template("chat.html", model_name=model_name)
     else:
@@ -75,8 +77,8 @@ def chat():
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
-        feteched_models = cursor.fetchall()
-        return render_template("chat.html", models=feteched_models)
+        fetched_models = cursor.fetchall()
+        return render_template("chat.html", models=fetched_models)
 
 
 @app.route('/models', methods=["GET", "POST"])
@@ -386,6 +388,7 @@ def api_chat():
     # print("Line 326: user_prompt: ", user_prompt)
 
     # append the user prompt to the conversation before asking the bot
+    current_conversation = session["current_conversation"]
     current_conversation.append({"role": "user", "content": user_prompt})
     if len(current_conversation) > 19:
         current_conversation.pop(1)
@@ -393,6 +396,7 @@ def api_chat():
     answer = askBot(API_KEY, session["selected_model_id"], current_conversation)
     # append the answer to the conversation
     current_conversation.append({"role": "assistant", "content": answer.content})
+    session["current_conversation"] = current_conversation
     # print("Line 336: current_conversation: ", current_conversation)
     # print("Line 337: answer: ", answer)
     answer_content = answer.content
