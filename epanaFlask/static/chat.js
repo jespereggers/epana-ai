@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const button = document.getElementById("chat-button");
 
     // Add an event listener to the input field
+    // FIXME: Works but throws an error on a get request, but not really a problem
     inputField.addEventListener("keyup", function (event) {
         if (event.key === "Enter") {
             // Prevent the form from submitting (if inside a form)
@@ -19,19 +20,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // Handle button click
     button.addEventListener("click", function () {
         getChat(); // Call the getChat() function when the button is clicked
+        // disabled the chatbox and the button while waiting for the response
+        document.getElementById("chat-input").disabled = true;
+        document.getElementById("chat-button").disabled = true;
     });
 });
 
 function addNewChatbox(text, player) {
     let chatbox = document.createElement("div");
-    chatbox.className = "chatbox";
-    if (player) {
-        chatbox.className += " user";
-    } else {
-        chatbox.className += " assistant";
-    }
+    // add the correct classnames
+    chatbox.className = "chatbox" + (player ? " user" : " assistant");
+    // add the text
     chatbox.innerHTML = text;
+    // add the chatbox to the chat-content
     document.getElementById('chat-content').appendChild(chatbox);
+    // scroll to the bottom of the chatbox to get the form into view
     document.getElementById('chat-form').scrollIntoView();
 
 }
@@ -39,10 +42,9 @@ function addNewChatbox(text, player) {
 function getChat() {
     let message = document.getElementById("chat-input").value;
     document.getElementById("chat-input").value = "";
-    document.getElementById("chat-input").focus();
     addNewChatbox(message, USER)
 
-
+    // send the message to the server
     fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -57,5 +59,11 @@ function getChat() {
         })
         .catch(error => {
             console.error('Error:', error);
-        });
+        }).finally(() => {
+        // enable the chatbox and the button again and focus on the chatbox
+        document.getElementById("chat-input").disabled = false;
+        document.getElementById("chat-button").disabled = false;
+        document.getElementById("chat-input").focus();
+    });
+
 }
