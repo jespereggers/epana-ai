@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
     fileSelector.addEventListener("change", function (event) {
         payButton = document.getElementById("payButton");
         // TODO: receive filename, get file size in bytes from database, estimate price and update price label
-        payButton.textContent = "Pay $99999"
+        let price = 10;
+        updateButton(`Pay $${price}`);
     });
 });
+
+function updateButton(text) {
+    let payButton = document.getElementById("payButton");
+    payButton.textContent = text;
+}

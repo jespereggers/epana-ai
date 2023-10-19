@@ -168,7 +168,6 @@ def upload_file():
         filepath = "file_uploads/" + input_filename
         file.save(filepath)
 
-
         # save the original filename
         original_filename = file.filename
 
@@ -413,6 +412,11 @@ def api_chat():
     }
     # print(response_data)
     return json.dumps(response_data)
+
+
+@app.route('/api/model_creator', methods=['POST'])
+def api_model_creator():
+    data_dict = request.json
 
 
 if __name__ == '__main__':
