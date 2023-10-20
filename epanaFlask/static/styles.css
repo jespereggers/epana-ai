@@ -53,6 +53,12 @@ main form {
     box-shadow: 0 0 0.2rem 0.1rem #8a8a8a;
 }
 
+/* FIXME: not working; used in size_too_big */
+#form-check-input {
+    background-color: #BC4749;
+    border-color: #BC4749;
+}
+
 
 .btn {
     font-size: 1em;

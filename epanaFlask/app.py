@@ -17,6 +17,7 @@ from playground import askBot
 
 DATABASE = 'epanaFlask/epana'
 API_KEY = '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'
+MAX_FILE_SIZE = -1
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -118,22 +119,25 @@ def create_model():
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("SELECT id FROM input_files WHERE name = (?)", (file_name,))
-        file_id = cursor.fetchall()[0][0]
-        # recreate the file names;
-        # TODO: Currently not working when there is no file in the database, because the file_id is None
-        output_file_name = "output_" + str(file_id) + ".jsonl"
-        output_file_path = "output_files/" + output_file_name
-        verification_file_name = "verification_" + str(file_id) + ".jsonl"
-        verification_file_path = "output_files/" + verification_file_name
-        # start the fine-tuning job
-        return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
-                       "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",
-                       400)
-        data = start_finetuning_job(API_KEY, output_file_path,
-                                    verification_file_path)
-        return render_template("create_model.html", data=data)
+        cursor.execute("SELECT id, size FROM input_files WHERE name = (?) AND owner_id = (?)",
+                       (file_name, session["user_id"],))
+        rows = cursor.fetchall()
+        print(rows)
+        file_id = rows[0][0]
+        file_size = rows[0][1]
+        # make sure the select menu was not manipulated
+        if not file_id:
+            return apology("File not found", 400)
+        # store the file id in the session to allow usage in the size_too_big route
+        session["file_id_for_model"] = file_id
+        session["file_size_for_model"] = file_size
+        if file_size > MAX_FILE_SIZE:
+            return redirect("/size_too_big")
 
+        # bad style; function should not start the model creation and return the data as well
+        data = start_model_creation()
+
+        return render_template("create_model.html", data=data)
 
     else:
         # get models from database and pass them to the template
@@ -142,6 +146,26 @@ def create_model():
         cursor.execute("SELECT name FROM input_files WHERE owner_id = (?)", (session["user_id"],))
         files = cursor.fetchall()
         return render_template("create_model.html", files=files)
+
+
+@app.route('/size_too_big', methods=["GET", "POST"])
+@login_required
+def size_too_big():
+    """Route to display when the file size is too big"""
+    if request.method == "POST":
+        user_choice = request.form.get("choice")
+        if user_choice == "trim":
+            # TODO: implement trimming and then start the model creation
+            return apology("Trimming not implemented yet", 400)
+        if user_choice == "pay":
+            # TODO: implement payment and then start the model creation
+            return apology("Payment not implemented yet", 400)
+        else:
+            return apology("Please select an option", 400)
+    else:
+        file_id = session["file_id_for_model"]
+        file_size = session["file_size_for_model"]
+        return render_template("size_too_big.html", file_id=file_id, file_size=file_size)
 
 
 @app.route('/upload_file', methods=["GET", "POST"])
@@ -389,6 +413,7 @@ def logout():
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
+    """API endpoint for the chat"""
     data_dict = request.json
     user_prompt = data_dict.get("user_prompt")
     # print("Line 326: user_prompt: ", user_prompt)
@@ -412,6 +437,25 @@ def api_chat():
     }
     # print(response_data)
     return json.dumps(response_data)
+
+
+def start_model_creation():
+    """Starts the model creation process and returns the data from the API"""
+    # get the file id from the session
+    file_id = session["file_id_for_model"]
+    # recreate the file names;
+    # TODO: Currently not working when there is no file in the database, because the file_id is None
+    output_file_name = "output_" + str(file_id) + ".jsonl"
+    output_file_path = "output_files/" + output_file_name
+    verification_file_name = "verification_" + str(file_id) + ".jsonl"
+    verification_file_path = "output_files/" + verification_file_name
+    # start the fine-tuning job
+    return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
+                   "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",
+                   400)
+    data = start_finetuning_job(API_KEY, output_file_path,
+                                verification_file_path)
+    return data
 
 
 @app.route('/api/model_creator', methods=['POST'])

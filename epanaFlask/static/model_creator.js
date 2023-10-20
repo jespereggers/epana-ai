@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+/**
+ * Update the text of the pay button
+ * @param text the new text of the pay button
+ */
 function updateButton(text) {
     let payButton = document.getElementById("payButton");
     payButton.textContent = text;
