@@ -116,7 +116,6 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
             file.write('\n'.join(convos))
         with open(verification_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
-    return len(current_convo)
 
     # FIXME not working with the current impl of the flask app
     # clean up epana directory

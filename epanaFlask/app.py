@@ -14,6 +14,7 @@ import sqlite3
 from chat_converter import chat_to_jsonl
 from finetuning_for_flask import start_finetuning_job
 from playground import askBot
+from token_checker import get_tokens
 
 DATABASE = 'epanaFlask/epana'
 API_KEY = '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'
@@ -119,7 +120,7 @@ def create_model():
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("SELECT id, size FROM input_files WHERE name = (?) AND owner_id = (?)",
+        cursor.execute("SELECT id, tokens FROM input_files WHERE name = (?) AND owner_id = (?)",
                        (file_name, session["user_id"],))
         rows = cursor.fetchall()
         print(rows)
@@ -206,11 +207,14 @@ def upload_file():
             input_filename_db = original_filename
 
         # count chats (translates to bytes) in file
-        size = os.path.getsize(filepath)
+        with open("output.jsonl", 'r', encoding='utf-8') as f:
+            convo = [json.loads(line) for line in f]
+
+        tokens = get_tokens(convo)
 
         # add the input file to the database
-        cursor.execute("INSERT INTO input_files (owner_id, name, size) VALUES (?, ?, ?)",
-                       (session["user_id"], input_filename_db, os.path.getsize(filepath)))
+        cursor.execute("INSERT INTO input_files (owner_id, name, tokens) VALUES (?, ?, ?)",
+                       (session["user_id"], input_filename_db, tokens))
 
         # FIXME: make this more robust (e.g. make the output file name dependent on the amount of output files not
         #  input files in the database)
