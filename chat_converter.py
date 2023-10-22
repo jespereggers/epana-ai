@@ -31,6 +31,15 @@ TOKEN_LIMIT = 3000
 ai_name: str
 
 
+def message_is_valid(message):
+    if '‎' in message:
+        return False
+    if 'https' in message:
+        return False
+    if message == '.':
+        return False
+    return True
+
 def get_dynamic_start_convo(ai_name):
     # confused why this only works when adding ai_name as function argument tbh
     system_prompt = SYSTEM_PROMPTS[random.randint(0, len(SYSTEM_PROMPTS) - 1)]
@@ -76,7 +85,7 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
                     # ignore first loop where last_actor is still "". Hopefully not breaking anythin 🙄
                     # ... seems alrighty!
                     # checking for "LRM" to avoid the unusable lines
-                    if not last_actor == "" and not '‎' in current_message:
+                    if not last_actor == "" and message_is_valid(current_message):
                         # add the actor and the message with the needed format
                         current_message = current_message.replace('"', "")
                         current_convo += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
