@@ -23,7 +23,7 @@ def num_assistant_tokens_from_messages(messages, encoding):
     return num_tokens
 
 
-def get_tokens(convo):
+def get_tokens(convo: dict):
     # Format error checks
     format_errors = defaultdict(int)
 
@@ -95,3 +95,9 @@ def get_tokens(convo):
 def get_price(convo):
     tokens = get_tokens(convo)
     return round((tokens / 1000) * 0.003, 2)
+
+
+if __name__ == '__main__':
+    with open("output.jsonl", 'r', encoding='utf-8') as f:
+        convo = [json.loads(line) for line in f]
+    tokens = get_tokens(convo)

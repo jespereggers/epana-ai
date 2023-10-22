@@ -1,6 +1,9 @@
 import os
 import random
+import ast
 import zipfile
+from token_checker import get_tokens
+
 
 # system prompt which will be added to the start of every conversation
 SYSTEM_PROMPTS = [
@@ -21,6 +24,8 @@ VERIFICATION_FACTOR = 10
 # data paths for quick adjustments
 TRAINING_PATH = "output.jsonl"
 VERIFICATION_PATH = "verification.jsonl"
+
+TOKEN_LIMIT = 3000
 
 # name of the person in the whatsapp chat which will be replaced as 'user'
 ai_name: str
@@ -77,7 +82,9 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
                         current_convo += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
                         # check for the end of a convo
-                        if current_timestamp and timestamp and (not current_timestamp == timestamp):
+                        #if current_timestamp and timestamp and (not current_timestamp == timestamp):
+                        convo_as_dict: dict = ast.literal_eval(current_convo[:-2] + "]}")
+                        if get_tokens([convo_as_dict]) > 3000:
                             current_convo = current_convo[:-2] + END_CONVO
                             # check for valid convos
                             if 'user' in current_convo and 'assistant' in current_convo:
