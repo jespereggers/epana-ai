@@ -9,6 +9,7 @@ API_KEY = "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"
 
 # data paths for quick adjustments
 TRAINING_PATH = "output.jsonl"
+VERIFICATION_PATH = "verification.jsonl"
 
 
 def start_finetuning_job(api_key, output_path, verification_path):
@@ -40,4 +41,4 @@ def start_finetuning_job(api_key, output_path, verification_path):
 
 
 if __name__ == '__main__':
-    start_finetuning_job(API_KEY)
+    start_finetuning_job(API_KEY, TRAINING_PATH, VERIFICATION_PATH)

@@ -3,11 +3,12 @@ import random
 import ast
 import zipfile
 from token_checker import get_tokens
+from datetime import datetime
 
 
 # system prompt which will be added to the start of every conversation
 SYSTEM_PROMPTS = [
-    "Eigne dir Wortwahl, Charaktereigenschaften und Erinnerung an besprochene Inhalte an."
+    "Imitiere ihn, aber nicht deinen Gesprächspartner, durch Ausdruck von Persönlichkeit, Wortwahl."
 ]
 SYSTEM_PROMPT_START = "Du bist "
 
@@ -39,6 +40,22 @@ def message_is_valid(message):
     if message == '.':
         return False
     return True
+
+
+def get_time_gap(timestamp1, timestamp2):
+    if len(timestamp1) == 0 or len(timestamp2) == 0:
+        return 0
+
+    # Convert the timestamps to datetime objects
+    format_str = '%d.%m.%y %H:%M:%S'
+    time1 = datetime.strptime(" ".join(timestamp1), format_str)
+    time2 = datetime.strptime(" ".join(timestamp2), format_str)
+
+    # Calculate the time difference in hours
+    time_difference = (time2 - time1).total_seconds() / 3600
+
+    return round(time_difference)
+
 
 def get_dynamic_start_convo(ai_name):
     # confused why this only works when adding ai_name as function argument tbh
@@ -78,7 +95,7 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
                     # splitting the line after the timestamp
                     splits = line.split("]", 1)
                     # splitting after the "," to get the date only
-                    timestamp = splits[0].split(",", 1)[0][1:]
+                    timestamp = [splits[0].split(",", 1)[0][1:].replace("[", ""), splits[0].split(",", 1)[1][1:]]
                     # strip to remove whitespace
                     content = splits[1].strip()
 
@@ -90,10 +107,10 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
                         current_message = current_message.replace('"', "")
                         current_convo += '{"role": "' + last_actor + '", "content": "' + current_message.strip() + '"}, '
 
-                        # check for the end of a convo
-                        #if current_timestamp and timestamp and (not current_timestamp == timestamp):
+                        # cut convo into
                         convo_as_dict: dict = ast.literal_eval(current_convo[:-2] + "]}")
-                        if get_tokens([convo_as_dict]) > 3000:
+
+                        if get_time_gap(current_timestamp, timestamp) >= 28 or get_tokens([convo_as_dict]) > 3500:
                             current_convo = current_convo[:-2] + END_CONVO
                             # check for valid convos
                             if 'user' in current_convo and 'assistant' in current_convo:
