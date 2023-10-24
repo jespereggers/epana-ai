@@ -80,7 +80,7 @@ def chat():
         # get models from database and pass them to the template
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
+        cursor.execute("SELECT name FROM models WHERE owner_id = (?) OR owner_id = -1", (session["user_id"],))
         fetched_models = cursor.fetchall()
         return render_template("chat.html", models=fetched_models)
 
@@ -96,7 +96,7 @@ def models():
         db = get_db()
         cursor = db.cursor()
         # TODO: model database should probably hold the original filename to make it easier to identify the model
-        cursor.execute("SELECT name FROM models WHERE owner_id = (?)", (session["user_id"],))
+        cursor.execute("SELECT name FROM models WHERE owner_id = (?) OR owner_id = -1", (session["user_id"],))
         model_info = cursor.fetchall()
         cursor.execute("SELECT name, date FROM input_files WHERE owner_id = (?)", (session["user_id"],))
         file_info = cursor.fetchall()
@@ -155,7 +155,10 @@ def size_too_big():
     """Route to display when the file size is too big"""
     if request.method == "POST":
         user_choice = request.form.get("choice")
-        if user_choice == "trim":
+        if user_choice == "trim-start":
+            # TODO: implement trimming and then start the model creation
+            return apology("Trimming not implemented yet", 400)
+        if user_choice == "trim-end":
             # TODO: implement trimming and then start the model creation
             return apology("Trimming not implemented yet", 400)
         if user_choice == "pay":
