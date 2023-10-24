@@ -21,13 +21,16 @@ TODO: a bar that indicates the file size and the max file size allowed
 TODO: show how much pay would cost
 <form action="/size_too_big" method="post">
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="choice" class="" id="Trim" value="trim">
-        <label class="form-check-label" for="Trim">Trim (Probably best to add an option to trim the begining or
-            the end)</label>
+        <input class="form-check-input" type="radio" name="choice" class="" id="trim-start" value="trim-start">
+        <label class="form-check-label" for="trim-start">Trim oldest messages</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="choice" class="" id="trim-end" value="trim-end">
+        <label class="form-check-label" for="trim-end">Trim latest messages</label>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="radio" name="choice" class="" id="Pay" value="pay">
-        <label class="form-check-label" for="Pay">Pay</label>
+        <label class="form-check-label" for="Pay">Pay to use the full lenght</label>
     </div>
     <button class="btn btn-red" type="submit" id="startButton">Start</button>
 </form>

@@ -1,3 +1,5 @@
+# a customized version of the playground for use in the flask app
+
 import os
 import openai
 
