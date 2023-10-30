@@ -1,3 +1,15 @@
+/*
+ Setup:
+        1. Click 'Configure data source'
+        2. Press '+'
+        3. Select 'SQLite'
+        4. Enter 'epana' as the name
+        5. Press the '+' button next to 'File' field and create a db file in the epanaFlask folder
+        6. Press OK
+        7. Run Current File
+        8. Press the '+' at 'target data source' to add the newly created data source
+ */
+
 create table input_files
 (
     id       integer                                   not null
