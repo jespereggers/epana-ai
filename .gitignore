@@ -36,3 +36,11 @@ epanaFlask/user_database
 .idea/dataSources.xml
 *.xml
 .idea/misc.xml
+__pycache__/chat_converter.cpython-311.pyc
+__pycache__/finetuning_for_flask.cpython-311.pyc
+__pycache__/finetuning.cpython-311.pyc
+__pycache__/playground.cpython-311.pyc
+__pycache__/token_checker.cpython-311.pyc
+epanaFlask/epana
+epanaFlask/__pycache__/app.cpython-311.pyc
+epanaFlask/__pycache__/helpers.cpython-311.pyc
