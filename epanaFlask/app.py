@@ -13,6 +13,7 @@ import sqlite3
 
 from chat_converter import chat_to_jsonl
 from finetuning_for_flask import start_finetuning_job
+from information import finetuning_job_succeded, get_model_id
 from playground import askBot
 from token_checker import get_tokens
 
@@ -80,6 +81,22 @@ def chat():
         # get models from database and pass them to the template
         db = get_db()
         cursor = db.cursor()
+
+        ### TODO: not tested properly
+
+        # check if any of the finetuning jobs are done and add them to the models table
+        cursor.execute("SELECT id, input_file_name FROM finetuning_jobs WHERE owner_id = (?)", (session["user_id"],))
+        finetuning_job_infos = cursor.fetchall()
+        for finetuning_job_info in finetuning_job_infos:
+            job_id = finetuning_job_info[0][0]
+            model_name = finetuning_job_info[0][1]
+            if finetuning_job_succeded(API_KEY, job_id):
+                new_model_id = get_model_id(API_KEY, job_id)
+                cursor.execute("INSERT INTO models (owner_id, model_id, name) VALUES (?, ?, ?)",
+                               (session["user_id"], new_model_id, model_name))
+                cursor.execute("DELETE FROM finetuning_jobs WHERE id = ?", (job_id,))
+                db.commit()
+        ### TODO: not tested properly till here
         cursor.execute("SELECT name FROM models WHERE owner_id = (?) OR owner_id = -1", (session["user_id"],))
         fetched_models = cursor.fetchall()
         return render_template("chat.html", models=fetched_models)
@@ -170,6 +187,38 @@ def size_too_big():
         file_id = session["file_id_for_model"]
         file_size = session["file_size_for_model"]
         return render_template("size_too_big.html", file_id=file_id, file_size=file_size)
+
+
+# TODO: Test this and than use it
+@app.route('/new_create_model', methods=["GET", "POST"])
+def new_create_model():
+    if request.method == "POST":
+        input_file = request.files["file"]
+        if not input_file:
+            return apology("Please input a file", 400)
+        input_file_name = input_file.filename
+        input_file_path = "file_uploads/" + session["user_id"] + datetime.datetime.now().strftime(
+            "%H%M%S%Y%m%d") + ".txt"
+        input_file.save(input_file_path)
+        output_file_path = "output_files/" + session["user_id"] + datetime.datetime.now().strftime(
+            "%H%M%S%Y%m%d") + ".jsonl"
+        verification_file_path = "output_files/" + "verification" + session[
+            "user_id"] + datetime.datetime.now().strftime("%H%M%S%Y%m%d") + ".jsonl"
+        chat_to_jsonl(input_file_path, output_file_path, verification_file_path)
+        data = start_model_creation(output_file_path, verification_file_path)
+        # TODO: save some info about the ongoing fintuning job in the db
+        # make an entry in the models table and add a row which specifies whether the job is done or create a new table
+        # for the finetuning jobs
+        finetuning_job_id = data.id
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO finetuning_jobs (id, owner_id, input_file_name) VALUES (?, ?, ?)",
+                       (finetuning_job_id, session["user_id"], input_file_name))
+        db.commit()
+        return render_template("new_create_model.html", data=data)
+
+    else:
+        return render_template("new_create_model.html")
 
 
 @app.route('/upload_file', methods=["GET", "POST"])
@@ -446,16 +495,9 @@ def api_chat():
     return json.dumps(response_data)
 
 
-def start_model_creation():
-    """Starts the model creation process and returns the data from the API"""
-    # get the file id from the session
-    file_id = session["file_id_for_model"]
-    # recreate the file names;
-    # TODO: Currently not working when there is no file in the database, because the file_id is None
-    output_file_name = "output_" + str(file_id) + ".jsonl"
-    output_file_path = "output_files/" + output_file_name
-    verification_file_name = "verification_" + str(file_id) + ".jsonl"
-    verification_file_path = "output_files/" + verification_file_name
+def start_model_creation(output_file_path, verification_file_path):
+    """Starts the model creation process and returns the data from the API. Probably not needed"""
+
     # start the fine-tuning job
     return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
                    "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",

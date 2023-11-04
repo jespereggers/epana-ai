@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+File Upload
+{% endblock %}
+{% block css %}
+<link href="/static/upload_file.css" rel="stylesheet">
+{% endblock %}
+
+{% block main %}
+<h1>Upload File</h1>
+
+<form action="/new_create_model" enctype="multipart/form-data" method="post">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control" id="file" name="file"
+               type="file" accept=".txt">
+    </div>
+    <button class="btn btn-red" type="submit">Create Model</button>
+</form>
+{% endblock %}
+
