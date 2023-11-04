@@ -5,7 +5,6 @@ import zipfile
 from token_checker import get_tokens
 from datetime import datetime
 
-
 # system prompt which will be added to the start of every conversation
 SYSTEM_PROMPTS = [
     "Imitiere ihn, aber nicht deinen Gesprächspartner, durch Ausdruck von Persönlichkeit, Wortwahl."
@@ -68,14 +67,14 @@ def unzip_file(zip_file_path, extract_path):
         zip_ref.extractall(extract_path)
 
 
-def chat_to_jsonl(file, output_path, verification_path) -> int:
+def chat_to_jsonl(input_file_path, output_file_path, verification_file_path) -> int:
     # assert correct file format
-    if file.split(".")[-1] == "zip":
+    if input_file_path.split(".")[-1] == "zip":
         # unzip file
-        unzip_file(file, 'temp')
-        file = "temp/_chat.txt"
+        unzip_file(input_file_path, 'temp')
+        input_file_path = "temp/_chat.txt"
 
-    with open(file, encoding='utf-8') as f:
+    with open(input_file_path, encoding='utf-8') as f:
         convos = []
         verification_convos = []
         ai_name = f.readline().split('] ')[1].split(':')[0]
@@ -145,9 +144,9 @@ def chat_to_jsonl(file, output_path, verification_path) -> int:
             convos.append(current_convo)
 
         # write convos and verification_convos to output files
-        with open(output_path, "w", encoding='utf-8') as file:
+        with open(output_file_path, "w", encoding='utf-8') as file:
             file.write('\n'.join(convos))
-        with open(verification_path, 'w', encoding='utf-8') as file:
+        with open(verification_file_path, 'w', encoding='utf-8') as file:
             file.write('\n'.join(verification_convos))
 
     # FIXME not working with the current impl of the flask app
