@@ -36,6 +36,14 @@ create table models
             unique
 );
 
+create table fintuning_jobs
+(
+    id              integer not null
+        primary key,
+    owner_id        integer not null,
+    input_file_name TEXT    not null
+);
+
 create table output_files
 (
     id       integer not null
