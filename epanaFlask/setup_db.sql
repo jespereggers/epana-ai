@@ -36,7 +36,7 @@ create table models
             unique
 );
 
-create table fintuning_jobs
+create table finetuning_jobs
 (
     id              integer not null
         primary key,
