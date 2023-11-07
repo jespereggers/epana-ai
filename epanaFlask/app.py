@@ -205,6 +205,12 @@ def new_create_model():
         verification_file_path = "output_files/" + "verification" + session[
             "user_id"] + datetime.datetime.now().strftime("%H%M%S%Y%m%d") + ".jsonl"
         chat_to_jsonl(input_file_path, output_file_path, verification_file_path)
+        # FIXME:
+        file_size = 10000000000
+        # endof FIXME
+
+        if file_size > MAX_FILE_SIZE:
+            return redirect("/size_too_big")
         data = start_model_creation(output_file_path, verification_file_path)
         # TODO: save some info about the ongoing fintuning job in the db
         # make an entry in the models table and add a row which specifies whether the job is done or create a new table

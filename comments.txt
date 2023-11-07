@@ -1,9 +1,0 @@
-# TODO: - own styles.css files for each page
-# TODO: - add a favicon
-# TODO: - improve error display (e.g. on login page)
-# TODO: - improve flash messages (e.g. after login)
-# TODO: - restructure the css of the whole project to improve maintainability and eliminate redundancies
-
-
-# DB: - not sure if the output_files table need a date column
-# DB: - storing the id of the outputfile in the input_files db is a possibility
