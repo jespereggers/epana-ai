@@ -8,7 +8,6 @@ file_uploads/upload_17.txt
 epanaFlask/.idea/.name
 epanaFlask/user_database
 *.txt
-*.xml
 epanaFlask/epana
 .idea/
 __pycache__

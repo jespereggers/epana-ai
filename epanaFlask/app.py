@@ -23,7 +23,8 @@ MAX_FILE_SIZE = -1
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
-SYSTEM_PROMPT = "Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an Inhalt"
+SYSTEM_PROMPT = ("Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an "
+                 "Inhalt")
 
 
 # function to get database connection
@@ -207,12 +208,12 @@ def new_create_model():
         chat_to_jsonl(input_file_path, output_file_path, verification_file_path)
         # FIXME:
         file_size = 10000000000
-        # endof FIXME
+        # end of FIXME
 
         if file_size > MAX_FILE_SIZE:
             return redirect("/size_too_big")
         data = start_model_creation(output_file_path, verification_file_path)
-        # TODO: save some info about the ongoing fintuning job in the db
+        # TODO: save some info about the ongoing finetuning job in the db
         # make an entry in the models table and add a row which specifies whether the job is done or create a new table
         # for the finetuning jobs
         finetuning_job_id = data.id
