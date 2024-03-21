@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Create Model
+{% endblock %}
+
+{% block css %}
+<link href="/static/create_model.css" rel="stylesheet">
+<script src="/static/model_creator.js"></script>
+{% endblock %}
+
+{% block main %}
+{% if request.method == 'GET' %}
+<h1>Create Model</h1>
+<form action="/create_model" method="post">
+
+    <div class="mb-3">
+        <select name="file_name" class="form-select" id="file-selector">
+            <option value="0" disabled selected>Choose File</option>
+            {% for file in files %}
+            <option value="{{ file[0] }}">{{ file[0] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button class="btn btn-red" type="submit" id="payButton">Pay $X</button>
+    <button class="btn btn-red">Resize Database</button>
+    Remove one button and change the js that was previously changing the button text
+
+</form>
+
+{% else %}
+<h1>Fine-tune job started</h1>
+job id: {{ data.id }}
+<br>
+model: {{ data.model }}
+<br>
+started: {{ data.created_at }}
+<br>
+<span id="{% if data.status == 'succeeded' %}success{% else %}failure{% endif %}">status: {{ data.status }}</span>
+<br>
+tokens: {{ data.trained_tokens }}
+{% endif %}
+
+{% endblock %}

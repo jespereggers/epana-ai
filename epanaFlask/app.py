@@ -185,12 +185,12 @@ def size_too_big():
         else:
             return apology("Please select an option", 400)
     else:
-        file_id = session["file_id_for_model"]
-        file_size = session["file_size_for_model"]
-        return render_template("size_too_big.html", file_id=file_id, file_size=file_size)
+        file_name = session["current_file_name"]
+        file_size = session["current_file_size"]
+        return render_template("size_too_big.html", file_name=file_name, file_size=file_size)
 
 
-# TODO: Test this and than use it
+# TODO: Test this and than use it. Than delete the old create_model route and fix the naming.
 @app.route('/new_create_model', methods=["GET", "POST"])
 def new_create_model():
     if request.method == "POST":
@@ -198,17 +198,21 @@ def new_create_model():
         if not input_file:
             return apology("Please input a file", 400)
         input_file_name = input_file.filename
-        input_file_path = "file_uploads/" + session["user_id"] + datetime.datetime.now().strftime(
+        input_file_path = "file_uploads/" + str(session["user_id"]) + datetime.datetime.now().strftime(
             "%H%M%S%Y%m%d") + ".txt"
         input_file.save(input_file_path)
-        output_file_path = "output_files/" + session["user_id"] + datetime.datetime.now().strftime(
+        output_file_path = "output_files/" + str(session["user_id"]) + datetime.datetime.now().strftime(
             "%H%M%S%Y%m%d") + ".jsonl"
-        verification_file_path = "output_files/" + "verification" + session[
-            "user_id"] + datetime.datetime.now().strftime("%H%M%S%Y%m%d") + ".jsonl"
+        verification_file_path = "output_files/" + "verification" + str(session[
+            "user_id"]) + datetime.datetime.now().strftime("%H%M%S%Y%m%d") + ".jsonl"
+        print(input_file_path, output_file_path, verification_file_path)
         chat_to_jsonl(input_file_path, output_file_path, verification_file_path)
         # FIXME:
         file_size = 10000000000
         # end of FIXME
+
+        session["current_file_name"] = input_file_name
+        session["current_file_size"] = file_size
 
         if file_size > MAX_FILE_SIZE:
             return redirect("/size_too_big")
@@ -222,10 +226,10 @@ def new_create_model():
         cursor.execute("INSERT INTO finetuning_jobs (id, owner_id, input_file_name) VALUES (?, ?, ?)",
                        (finetuning_job_id, session["user_id"], input_file_name))
         db.commit()
-        return render_template("new_create_model.html", data=data)
+        return render_template("create_model.html", data=data)
 
     else:
-        return render_template("new_create_model.html")
+        return render_template("create_model.html")
 
 
 @app.route('/upload_file', methods=["GET", "POST"])

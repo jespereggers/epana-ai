@@ -1,33 +1,23 @@
 {% extends "layout.html" %}
 
 {% block title %}
-Create Model
+File Upload
 {% endblock %}
-
 {% block css %}
-<link href="/static/create_model.css" rel="stylesheet">
-<script src="/static/model_creator.js"></script>
+<link href="/static/upload_file.css" rel="stylesheet">
 {% endblock %}
 
 {% block main %}
 {% if request.method == 'GET' %}
-<h1>Create Model</h1>
-<form action="/create_model" method="post">
+<h1>Upload File</h1>
 
+<form action="/new_create_model" enctype="multipart/form-data" method="post">
     <div class="mb-3">
-        <select name="file_name" class="form-select" id="file-selector">
-            <option value="0" disabled selected>Choose File</option>
-            {% for file in files %}
-            <option value="{{ file[0] }}">{{ file[0] }}</option>
-            {% endfor %}
-        </select>
+        <input autocomplete="off" autofocus class="form-control" id="file" name="file"
+               type="file" accept=".txt">
     </div>
-    <button class="btn btn-red" type="submit" id="payButton">Pay $X</button>
-    <button class="btn btn-red">Resize Database</button>
-    Remove one button and change the js that was previously changing the button text
-
+    <button class="btn btn-red" type="submit">Create Model</button>
 </form>
-
 {% else %}
 <h1>Fine-tune job started</h1>
 job id: {{ data.id }}
@@ -40,5 +30,6 @@ started: {{ data.created_at }}
 <br>
 tokens: {{ data.trained_tokens }}
 {% endif %}
-
 {% endblock %}
+
+
