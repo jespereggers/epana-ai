@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\krankes Projekt\epana\epanaFlask\user_database</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="epana" uuid="2b5131f7-15c4-4a4c-84b2-bf4032f5895a">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\jespe\OneDrive\Dokumente\GitHub\epana\epanaFlask\epana</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

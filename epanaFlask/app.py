@@ -17,7 +17,7 @@ from information import finetuning_job_succeded, get_model_id
 from playground import askBot
 from token_checker import get_tokens
 
-DATABASE = 'user_database'
+DATABASE = 'epana'
 API_KEY = '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'
 MAX_FILE_SIZE = -1
 
