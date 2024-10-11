@@ -31,3 +31,4 @@ def start_finetuning_job(api_key, output_path, verification_path):
     # print finetuning jobs
     print("finetuningJobs: ", openai.FineTuningJob.list().data[0])
     return openai.FineTuningJob.list().data[0]
+1
