@@ -1,27 +1,17 @@
 # a customized version of the playground for use in the flask app
-
-import os
-import openai
+from openai import OpenAI
 
 
 def askBot(api_key, model_id, current_conversation):
-    # Set OpenAI API key
-    openai.api_key = api_key
+    client = OpenAI(api_key=api_key)
 
-    # Generate response based on prompt
-    response = openai.ChatCompletion.create(
-        model=model_id,
+    chat_completion = client.chat.completions.create(
         messages=current_conversation,
-        temperature=1,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+        model=model_id,
     )
 
-    current_conversation
-    return response.choices[0].message
+    return chat_completion.choices[0].message
 
 
 if __name__ == '__main__':
-    askBot("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", "ft:gpt-3.5-turbo-0613:personal::88BtAC5L")
+    askBot("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", "ft:gpt-3.5-turbo-0613:personal::88BtAC5L")

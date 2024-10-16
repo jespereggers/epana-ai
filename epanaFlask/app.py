@@ -18,7 +18,7 @@ from playground import askBot
 from token_checker import get_tokens
 
 DATABASE = 'epana.db'
-API_KEY = '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'
+API_KEY = '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'
 MAX_FILE_SIZE = -1
 
 app = Flask(__name__)
