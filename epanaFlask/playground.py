@@ -5,12 +5,12 @@ def askBot(api_key, model_id, current_conversation):
     client = OpenAI(api_key=api_key)
 
     # Aktuelle API-Aufrufstruktur
-    completion = client.completions.create(
-        model="gpt-4o-mini",
+    completion = client.chat.completions.create(
+        model=model_id,
         messages=current_conversation
     )
 
-    return completion['choices'][0]['message']
+    return completion.choices[0].message
 
 
 if __name__ == '__main__':
