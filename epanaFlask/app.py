@@ -5,15 +5,24 @@ import datetime
 import json
 import os
 
-from flask import Flask, flash, redirect, render_template, request, session, g, jsonify
+from openai import api_key
+
+import environment as env
+
+from adodbapi.apibase import SQLrow
+from flask import Flask, flash, redirect, render_template, request, session, g, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from helpers import login_required, apology
+#from helpers import login_required, apology, save_zip_as_training_data, get_zip_as_text, extract_timespan
 import sqlite3
+import zipfile
+import io
+
+from helpers import *
 
 from chat_converter import chat_to_jsonl
 from finetuning_for_flask import start_finetuning_job
-from information import finetuning_job_succeded, get_model_id
+from information import get_finetuning_job, get_model_id
 from playground import askBot
 from token_checker import get_tokens
 
@@ -25,7 +34,6 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 SYSTEM_PROMPT = ("Du bist Jesper. Lerne zu handeln durch Wortwahl, charakteristische Eigenschaften und Erinnerung an "
                  "Inhalt")
-
 
 # function to get database connection
 def get_db():
@@ -80,6 +88,7 @@ def chat():
         return render_template("chat.html", model_name=model_name)
     else:
         # get models from database and pass them to the template
+        running_jobs = []
         db = get_db()
         cursor = db.cursor()
 
@@ -88,19 +97,38 @@ def chat():
         # check if any of the finetuning jobs are done and add them to the models table
         cursor.execute("SELECT id, input_file_name FROM finetuning_jobs WHERE owner_id = (?)", (session["user_id"],))
         finetuning_job_infos = cursor.fetchall()
+
+
         for finetuning_job_info in finetuning_job_infos:
-            job_id = finetuning_job_info[0][0]
-            model_name = finetuning_job_info[0][1]
-            if finetuning_job_succeded(API_KEY, job_id):
-                new_model_id = get_model_id(API_KEY, job_id)
+            print("FINETUNING JOB CONFIRMED")
+            print("------------------------")
+            job_id = finetuning_job_info[0]
+            model_name = finetuning_job_info[1]
+
+            finetuning_job = get_finetuning_job(job_id)
+
+            if finetuning_job.status == "failed":
+                print(finetuning_job.error.message)
+                print("-------")
+                cursor.execute("DELETE FROM finetuning_jobs WHERE id = ?", (job_id,))
+                db.commit()
+
+            if finetuning_job.status == "succeeded":
+                new_model_id = get_model_id(job_id)
+                print("FINISHED")
+                print(new_model_id)
                 cursor.execute("INSERT INTO models (owner_id, model_id, name) VALUES (?, ?, ?)",
                                (session["user_id"], new_model_id, model_name))
                 cursor.execute("DELETE FROM finetuning_jobs WHERE id = ?", (job_id,))
                 db.commit()
+            else:
+                model_name = finetuning_job_info[1]
+                running_jobs.append({"name": model_name, "status": finetuning_job.status})
+
         ### TODO: not tested properly till here
         cursor.execute("SELECT name FROM models WHERE owner_id = (?) OR owner_id = -1", (session["user_id"],))
         fetched_models = cursor.fetchall()
-        return render_template("chat.html", models=fetched_models)
+        return render_template("chat.html", models=fetched_models, fine_tuning_jobs=running_jobs)
 
 
 @app.route('/models', methods=["GET", "POST"])
@@ -232,6 +260,59 @@ def new_create_model():
         return render_template("create_model.html")
 
 
+@app.route('/add_character', methods=["GET", "POST"])
+@login_required
+def add_character():
+    if request.method == "POST":
+        file = request.files.get("file")
+
+        if not file:
+            # already uploaded file
+            archive_path: str = "temp/archive_"+str(env.creation_process_id)+".txt"
+            training_path: str = "temp/training_"+str(env.creation_process_id)+".jsonl"
+            verification_path: str = "temp/verification_"+str(env.creation_process_id)+".jsonl"
+
+            if chat_to_jsonl(archive_path, training_path, verification_path):
+                # successfull conversion
+                data = start_model_creation(training_path, verification_path)
+                finetuning_job_id = data.id
+                db = get_db()
+                cursor = db.cursor()
+                name = request.form.get("chat-name")
+                print(name)
+                cursor.execute("INSERT INTO finetuning_jobs (id, owner_id, input_file_name) VALUES (?, ?, ?)",
+                               (str(finetuning_job_id), int(session["user_id"]), name))
+                db.commit()
+
+                return redirect("/chat")
+
+            return redirect("/chat")
+
+        # reused: get unique file-id
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT MAX(id) FROM input_files")
+        max_input_id = cursor.fetchall()[0][0]
+        if max_input_id is None:
+            max_input_id = -1
+
+        env.creation_process_id = max_input_id + 1
+
+        text = get_zip_as_text(file)
+        start, end = extract_timespan(text)
+        default_name = extract_name(text)
+
+        # save file
+        with open("temp/archive_"+str(env.creation_process_id)+".txt", "w", encoding='utf-8') as file:
+            file.write(text)
+
+        # Render template with start and end values
+        return render_template("add_character.html", has_file=1, start=start, end=end, name=default_name)
+    else:
+        return render_template("add_character.html", has_file=0)
+
+
+
 @app.route('/upload_file', methods=["GET", "POST"])
 @login_required
 def upload_file():
@@ -254,6 +335,8 @@ def upload_file():
         input_filename = "upload_" + str(max_input_id + 1) + ".txt"
         # save file to server
         filepath = "file_uploads/" + input_filename
+        print(filepath)
+        print("-----------------")
         file.save(filepath)
 
         # save the original filename
@@ -510,9 +593,9 @@ def start_model_creation(output_file_path, verification_file_path):
     """Starts the model creation process and returns the data from the API. Probably not needed"""
 
     # start the fine-tuning job
-    return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
-                   "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",
-                   400)
+    #return apology("THIS APOLOGY PREVENTS THE FINETUNING JOB FROM STARTING, BECAUSE IT WILL COST MONEY! REMOVE "
+    #               "WITH CAUTION! NO GUARANTEE ON NOT CREATING AN INFINIT LOOP, GIVING YOUR LAST DIME TO OPENAI",
+    #               400)
     data = start_finetuning_job(API_KEY, output_file_path,
                                 verification_file_path)
     return data

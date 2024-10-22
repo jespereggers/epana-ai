@@ -25,7 +25,7 @@ def create_tables():
     );
 
     CREATE TABLE IF NOT EXISTS finetuning_jobs (
-        id INTEGER PRIMARY KEY,
+        id TEXT PRIMARY KEY,
         owner_id INTEGER NOT NULL,
         input_file_name TEXT NOT NULL
     );

@@ -1,0 +1,4 @@
+API_KEY = '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'
+
+
+creation_process_id: int = -1

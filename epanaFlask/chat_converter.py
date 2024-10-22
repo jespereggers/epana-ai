@@ -2,6 +2,7 @@ import os
 import random
 import ast
 import zipfile
+import json
 from token_checker import get_tokens
 from datetime import datetime
 
@@ -74,7 +75,7 @@ def chat_to_jsonl(input_file_path, output_file_path, verification_file_path) -> 
         unzip_file(input_file_path, 'temp')
         input_file_path = "temp/_chat.txt"
 
-    with open(input_file_path, encoding='utf-8') as f:
+    with (open(input_file_path, encoding='utf-8') as f):
         convos = []
         verification_convos = []
         ai_name = f.readline().split('] ')[1].split(':')[0]
@@ -111,6 +112,7 @@ def chat_to_jsonl(input_file_path, output_file_path, verification_file_path) -> 
 
                         if get_time_gap(current_timestamp, timestamp) >= 28 or get_tokens([convo_as_dict]) > 3500:
                             current_convo = current_convo[:-2] + END_CONVO
+
                             # check for valid convos
                             if 'user' in current_convo and 'assistant' in current_convo:
                                 # check to which list the conversation should be added
@@ -143,11 +145,28 @@ def chat_to_jsonl(input_file_path, output_file_path, verification_file_path) -> 
         if not current_convo == EMPTY_CONVO:
             convos.append(current_convo)
 
+        # assert each convo ends with message of assistant
+        for i in range(0, len(convos)):
+            convo_as_dict = json.loads(convos[i])
+            if convo_as_dict["messages"][-1]["role"] == "user":
+                convo_as_dict["messages"].append({"role": "assistant", "content": ""})
+                convos[i] = json.dumps(convo_as_dict)
+
+        for i in range(0, len(verification_convos)):
+            convo_as_dict = json.loads(verification_convos[i])
+            if convo_as_dict["messages"][-1]["role"] == "user":
+                convo_as_dict["messages"].append({"role": "assistant", "content": ""})
+                verification_convos[i] = json.dumps(convo_as_dict)
+
+        output = '\n'.join(convos)
+        verify = '\n'.join(verification_convos)
+
         # write convos and verification_convos to output files
         with open(output_file_path, "w", encoding='utf-8') as file:
-            file.write('\n'.join(convos))
+            file.write(output)
         with open(verification_file_path, 'w', encoding='utf-8') as file:
-            file.write('\n'.join(verification_convos))
+            file.write(verify)
+    return 1
 
     # FIXME not working with the current impl of the flask app
     # clean up epana directory
@@ -156,4 +175,4 @@ def chat_to_jsonl(input_file_path, output_file_path, verification_file_path) -> 
 
 
 if __name__ == '__main__':
-    chat_to_jsonl("chat.zip", TRAINING_PATH, VERIFICATION_PATH)
+    chat_to_jsonl("temp/_chat.txt", TRAINING_PATH, VERIFICATION_PATH)

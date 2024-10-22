@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add Character
+{% endblock %}
+
+{% block main %}
+    <div class="d-flex flex-column align-items-center">
+        <div class="mb-3">
+            <h1>Add Character</h1>
+        </div>
+
+        {% if has_file %}
+            <form action="/add_character" method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                <div class="mb-3">
+                    <label for="name" class="d-block text-center">Name</label>
+                    <input type="text" id="chat-name" name="chat-name" value="{{ name }}" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <select name="gender" class="form-select">
+                        <option value="0" disabled selected>Choose Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female" selected>Female</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <!-- Start date picker with the default start value and end date as max -->
+                    <label for="start-date" class="d-block text-center">Start Day:</label>
+                    <input type="date" id="start-date" name="start-date" value="{{ start }}" class="form-control" required
+                           min="{{ start }}" max="{{ end }}">
+                </div>
+
+                <div class="mb-3">
+                    <!-- End date picker with the default end value and start date as min -->
+                    <label for="end-date" class="d-block text-center">End Day:</label>
+                    <input type="date" id="end-date" name="end-date" value="{{ end }}" class="form-control" required
+                           min="{{ start }}" max="{{ end }}">
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-red" type="submit">Submit</button>
+                </div>
+            </form>
+
+        {% else %}
+            <form action="/add_character" method="post" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                <div class="mb-3">
+                    <input autocomplete="off" autofocus class="form-control" id="file" name="file" type="file" accept=".zip">
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-red" type="submit">Continue</button>
+                </div>
+            </form>
+        {% endif %}
+
+    </div>
+{% endblock %}

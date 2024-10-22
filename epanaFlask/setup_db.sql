@@ -38,7 +38,7 @@ create table models
 
 create table finetuning_jobs
 (
-    id              integer not null
+    id              TEXT not null
         primary key,
     owner_id        integer not null,
     input_file_name TEXT    not null
