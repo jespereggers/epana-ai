@@ -3,20 +3,20 @@
 
 import datetime
 import json
-import os
+#import os
 
-from openai import api_key
+#from openai import api_key
 
 import environment as env
 
-from adodbapi.apibase import SQLrow
+#from adodbapi.apibase import SQLrow
 from flask import Flask, flash, redirect, render_template, request, session, g, jsonify, request
 from werkzeug.security import generate_password_hash, check_password_hash
 
 #from helpers import login_required, apology, save_zip_as_training_data, get_zip_as_text, extract_timespan
 import sqlite3
-import zipfile
-import io
+#import zipfile
+#import io
 
 from helpers import *
 
