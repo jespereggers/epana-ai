@@ -33,7 +33,8 @@ create table models
     model_id TEXT    not null,
     name     TEXT    not null
         constraint models_pk
-            unique
+            unique,
+    thread_id TEXT not null
 );
 
 create table finetuning_jobs
@@ -89,11 +90,11 @@ VALUES (2, 'jesper.eggers@gmail.com',
         'free');
 
 
-INSERT INTO models (id, owner_id, model_id, name)
-VALUES (1, -1, 'ft:gpt-3.5-turbo-0613:personal::88BtAC5L', 'jesper_felix_chat (open to all)');
+INSERT INTO models (id, owner_id, model_id, name, thread_id)
+VALUES (1, -1, 'ft:gpt-3.5-turbo-0613:personal::88BtAC5L', 'jesper_felix_chat (open to all)', '-1');
 
-INSERT INTO models (id, owner_id, model_id, name)
-VALUES (2, -1, 'ft:gpt-3.5-turbo-0613:personal::8D8XolsY', 'neues Modell (open to all)');
+INSERT INTO models (id, owner_id, model_id, name, thread_id)
+VALUES (2, -1, 'ft:gpt-3.5-turbo-0613:personal::8D8XolsY', 'neues Modell (open to all)', '-1');
 
 
 INSERT INTO tiers (id, name, price)

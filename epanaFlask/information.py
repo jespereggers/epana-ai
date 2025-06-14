@@ -24,3 +24,21 @@ def get_model_id(job_id):
 
     job = client.fine_tuning.jobs.retrieve(job_id)
     return job.fine_tuned_model
+
+
+def create_thread():
+    client = OpenAI(api_key=env.API_KEY)
+
+    empty_thread = client.beta.threads.create()
+    return empty_thread
+
+
+def create_msg(thread_id, role, content):
+    client = OpenAI(api_key=env.API_KEY)
+
+    thread_message = client.beta.threads.messages.create(
+        thread_id,
+        role=role,
+        content=content,
+    )
+    return thread_message

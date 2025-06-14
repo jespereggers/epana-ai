@@ -63,11 +63,11 @@ def create_tables():
             'scrypt:32768:8:1$KwmdyvzwtBb069Qs$ab5270ccece3b366de7e8dc8c5929c4220c7a7071187030627a3bb3a59cd2650a33cdf25f10ff11a8881bfa38279860f20498904e102b3ba8f93e07870d9ef6a', 
             'free');
 
-    INSERT INTO models (id, owner_id, model_id, name)
-    VALUES (1, -1, 'ft:gpt-3.5-turbo-0613:personal::88BtAC5L', 'jesper_felix_chat (open to all)');
+    INSERT INTO models (id, owner_id, model_id, name, thread_id)
+    VALUES (1, -1, 'ft:gpt-3.5-turbo-0613:personal::88BtAC5L', 'jesper_felix_chat (open to all)', '-1');
 
-    INSERT INTO models (id, owner_id, model_id, name)
-    VALUES (2, -1, 'ft:gpt-3.5-turbo-0613:personal::8D8XolsY', 'neues Modell (open to all)');
+    INSERT INTO models (id, owner_id, model_id, name, thread_id)
+    VALUES (2, -1, 'ft:gpt-3.5-turbo-0613:personal::8D8XolsY', 'neues Modell (open to all)', '-1');
 
     INSERT INTO tiers (id, name, price)
     VALUES (1, 'free', 0);
